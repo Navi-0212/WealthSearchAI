@@ -1,0 +1,19 @@
+# Conda Environment
+.conda/
+.conda
+
+# Environment Secrets
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE and local database cache files
+.vscode/
+.idea/
+.gemini/
+*.log

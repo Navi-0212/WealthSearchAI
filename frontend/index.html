@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WealthAI - Grounded Mutual Fund RAG Assistant</title>
+    <!-- Google Fonts for premium modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ApexCharts Library for interactive charting -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg-container">
+        <!-- Floating Blur Background Blobs for glassmorphic visual excellence -->
+        <div class="blur-blob blob-primary"></div>
+        <div class="blur-blob blob-secondary"></div>
+        <div class="blur-blob blob-tertiary"></div>
+        
+        <div class="app-container">
+            <!-- Sidebar with Scoped Schemes List -->
+            <aside class="sidebar-aside">
+                <div class="sidebar-header">
+                    <div class="logo-wrapper">
+                        <i class="fa-solid fa-chart-line logo-icon"></i>
+                        <h2>Wealth<span>AI</span></h2>
+                    </div>
+                    <p class="sidebar-subtitle">Scoped Groww RAG Assistant</p>
+                </div>
+                
+                <div class="sidebar-search-container">
+                    <div class="sidebar-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="sidebar-search-input" placeholder="Search funds or dates..." autocomplete="off">
+                    </div>
+                </div>
+                
+                <div class="schemes-list-container">
+                    <h3>Scoped Mutual Funds (<span id="schemes-count">8</span>)</h3>
+                    <div class="schemes-list" id="target-schemes-list">
+                        <!-- Populated dynamically via app.js -->
+                    </div>
+                </div>
+                
+                <!-- Recent Transactions Panel -->
+                <div class="recent-transactions-aside">
+                    <div class="transactions-header-row">
+                        <h3>Recent Transactions</h3>
+                    </div>
+                    <div class="transactions-list-wrapper" id="transactions-list-wrapper">
+                        <!-- Populated dynamically via app.js -->
+                    </div>
+                </div>
+                
+                <div class="sidebar-footer">
+                    <div class="system-status">
+                        <span class="status-indicator online"></span>
+                        <div class="status-details">
+                            <p class="status-title">Daily Sync Complete</p>
+                            <p class="status-time">Ingestion: Today, 9:15 AM IST</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Main Chat Workspace -->
+            <main class="chat-workspace">
+                <!-- Chat Header -->
+                <header class="workspace-header">
+                    <div class="header-left">
+                        <div class="bot-avatar">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bot-details">
+                            <h2>Grounded Wealth Assistant</h2>
+                            <p class="compliance-badge"><i class="fa-solid fa-shield-halved"></i> SEBI Compliance Grounded</p>
+                        </div>
+                    </div>
+                    
+                    <div class="header-right">
+                        <button class="header-btn" id="btn-clear-chat" title="Clear Conversation">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </header>
+                
+                <!-- Conversation Thread Stream -->
+                <section class="conversation-thread" id="chat-thread">
+                    <!-- Initial Welcome Greeting Bubble -->
+                    <div class="message bot-msg fade-in">
+                        <div class="avatar-msg"><i class="fa-solid fa-robot"></i></div>
+                        <div class="msg-bubble-wrapper">
+                            <div class="msg-bubble">
+                                <p>Welcome to <strong>WealthAI</strong>, your compliance-grounded virtual wealth assistant.</p>
+                                <p>I am strictly grounded in the official facts, manager profiles, work histories, and public ratings scraped daily for our scoped <strong>8 direct-growth mutual funds</strong>. I do not speculate, predict, or offer generic investment advice.</p>
+                                <p>Here are a few quick things you can ask me:</p>
+                                <div class="suggested-prompts-grid">
+                                    <button class="suggested-prompt-btn" data-query="Compare Nippon India Small Cap vs Bandhan Small Cap performance over 5 years.">
+                                        <i class="fa-solid fa-chart-simple"></i> Compare Nippon vs Bandhan over 5Y
+                                    </button>
+                                    <button class="suggested-prompt-btn" data-query="Who manages the Parag Parikh Long Term Value Fund and what is their work history?">
+                                        <i class="fa-solid fa-user-tie"></i> Parag Parikh Manager Profile
+                                    </button>
+                                    <button class="suggested-prompt-btn" data-query="What is the exit load and Groww public rating for Zerodha Multi Asset FoF?">
+                                        <i class="fa-solid fa-star"></i> Zerodha Exit Load & Ratings
+                                    </button>
+                                </div>
+                            </div>
+                            <span class="msg-timestamp">System Initialized</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Chat Input Tray -->
+                <footer class="workspace-footer">
+                    <form class="chat-input-form" id="chat-form">
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="user-input-field" 
+                                placeholder="Ask a factual question about scoped funds..." 
+                                autocomplete="off"
+                                required
+                            >
+                            <button type="submit" class="btn-send-message" id="btn-send" title="Send Message">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="compliance-footer-note">
+                        All information is scraped daily from verified Groww product details at 9:15 AM IST and grounded under strict compliance guardrails.
+                    </p>
+                </footer>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Connect Broker Modal -->
+    <div class="modal-overlay" id="broker-connect-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-link"></i> Link Broking Account</h2>
+                <button class="btn-close-modal" id="btn-close-connect"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Link your original broking app to track recent transactions directly within the WealthSearchAI dashboard.</p>
+                
+                <div class="broker-selection-grid">
+                    <button class="broker-option-btn" data-broker="Groww">
+                        <i class="fa-solid fa-wallet broker-icon"></i>
+                        <span>Groww</span>
+                    </button>
+                    <button class="broker-option-btn" data-broker="Zerodha">
+                        <i class="fa-solid fa-building-columns broker-icon"></i>
+                        <span>Zerodha (Kite)</span>
+                    </button>
+                    <button class="broker-option-btn" data-broker="Upstox">
+                        <i class="fa-solid fa-money-bill-trend-up broker-icon"></i>
+                        <span>Upstox</span>
+                    </button>
+                </div>
+                
+                <div class="consent-agreement-box">
+                    <label class="consent-checkbox-wrapper">
+                        <input type="checkbox" id="consent-checkbox">
+                        <span class="checkbox-custom"></span>
+                        <span class="consent-text">I authorize WealthSearchAI to track my transaction history from my selected broking app. I understand I can revoke this permission at any time.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" id="btn-cancel-connect">Cancel</button>
+                <button class="modal-btn btn-primary disabled" id="btn-confirm-connect" disabled>Authorize & Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Transactions Modal -->
+    <div class="modal-overlay" id="all-transactions-modal">
+        <div class="modal-card modal-card-large">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-list-check"></i> Transaction History</h2>
+                <button class="btn-close-modal" id="btn-close-history"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-controls-row">
+                    <div class="history-tabs" id="history-filter-tabs">
+                        <button class="history-tab-btn active" data-filter="All">All</button>
+                        <button class="history-tab-btn" data-filter="Buy">Buys</button>
+                        <button class="history-tab-btn" data-filter="Sell">Sells</button>
+                        <button class="history-tab-btn" data-filter="SIP">SIPs</button>
+                    </div>
+                    <button class="btn-disconnect-broker" id="btn-disconnect-broker-action">
+                        <i class="fa-solid fa-link-slash"></i> Disconnect Broker
+                    </button>
+                </div>
+                
+                <div class="transactions-full-list" id="transactions-full-list-container">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

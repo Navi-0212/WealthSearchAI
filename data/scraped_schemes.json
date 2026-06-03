@@ -1,0 +1,474 @@
+[
+  {
+    "fund_name": "Bandhan Small Cap Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/bandhan-small-cap-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 36.8,
+    "aum_in_crores": 5120.5,
+    "expense_ratio_pct": 0.48,
+    "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.6,
+      "total_reviews": 3214
+    },
+    "fund_managers": [
+      {
+        "name": "Saurabh Sharma",
+        "tenure_start": "2018-11-09",
+        "education": "B.Sc. in Physics, MBA in Finance",
+        "work_history": [
+          "Fund Manager of Equities at Bandhan AMC since 2018.",
+          "Previously Senior Equity Analyst at L&T Mutual Fund.",
+          "Over 12 years of experience in Indian equity research and portfolio management."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 36.45,
+      "5_year_return_pct": 29.12,
+      "7_year_return_pct": 21.8,
+      "10_year_return_pct": 23.4
+    },
+    "top_holdings": [
+      {
+        "company": "Reverse Repo",
+        "sector": "Unspecified",
+        "allocation_pct": 13.98
+      },
+      {
+        "company": "REC Ltd",
+        "sector": "Financial",
+        "allocation_pct": 3.49
+      },
+      {
+        "company": "Sobha Ltd",
+        "sector": "Real Estate",
+        "allocation_pct": 3.28
+      },
+      {
+        "company": "LT Foods Ltd",
+        "sector": "Consumer Staples",
+        "allocation_pct": 2.14
+      },
+      {
+        "company": "PNB Housing Finance Ltd",
+        "sector": "Financial",
+        "allocation_pct": 1.66
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:23.359978Z"
+  },
+  {
+    "fund_name": "Bandhan Midcap Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/bandhan-midcap-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 24.15,
+    "aum_in_crores": 1240.2,
+    "expense_ratio_pct": 0.57,
+    "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.5,
+      "total_reviews": 1045
+    },
+    "fund_managers": [
+      {
+        "name": "Sachin Relekar",
+        "tenure_start": "2020-12-07",
+        "education": "B.E. in Mechanical Engineering, MBA from Jamnalal Bajaj Institute of Management Studies (JBIMS)",
+        "work_history": [
+          "Head of Equities & Fund Manager at Bandhan AMC since 2020.",
+          "Formerly Senior Fund Manager at LIC Mutual Fund.",
+          "Over 20 years of research and portfolio management experience in mid-cap and large-cap segments."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 25.6,
+      "5_year_return_pct": 22.35,
+      "7_year_return_pct": 17.4,
+      "10_year_return_pct": 19.1
+    },
+    "top_holdings": [
+      {
+        "company": "GE Vernova T&D India Ltd",
+        "sector": "Capital Goods",
+        "allocation_pct": 4.11
+      },
+      {
+        "company": "The Federal Bank Ltd.",
+        "sector": "Financial",
+        "allocation_pct": 3.12
+      },
+      {
+        "company": "Apar Industries Ltd.",
+        "sector": "Consumer Staples",
+        "allocation_pct": 3.06
+      },
+      {
+        "company": "Fortis Healthcare Ltd.",
+        "sector": "Healthcare",
+        "allocation_pct": 2.97
+      },
+      {
+        "company": "Vishal Mega Mart Ltd.",
+        "sector": "Services",
+        "allocation_pct": 2.96
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:27.885400Z"
+  },
+  {
+    "fund_name": "Bandhan Multi Cap Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/bandhan-multi-cap-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 18.9,
+    "aum_in_crores": 2150.4,
+    "expense_ratio_pct": 0.77,
+    "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.4,
+      "total_reviews": 1423
+    },
+    "fund_managers": [
+      {
+        "name": "Daylynn Pinto",
+        "tenure_start": "2017-10-20",
+        "education": "B.Com from St. Aloysius College, PGDM from Goa Institute of Management",
+        "work_history": [
+          "Senior Fund Manager at Bandhan AMC since 2017.",
+          "Previously Fund Manager at SBI Mutual Fund for 11 years.",
+          "Specializes in value investing, multi-cap, and tax saver strategies with over 18 years in equities."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 28.9,
+      "5_year_return_pct": 24.15,
+      "7_year_return_pct": 18.9,
+      "10_year_return_pct": 21.05
+    },
+    "top_holdings": [
+      {
+        "company": "HDFC Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 4.96
+      },
+      {
+        "company": "Reliance Industries Ltd",
+        "sector": "Energy & Utilities",
+        "allocation_pct": 3.95
+      },
+      {
+        "company": "Reverse Repo",
+        "sector": "Unspecified",
+        "allocation_pct": 3.58
+      },
+      {
+        "company": "Kotak Mahindra Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 3.53
+      },
+      {
+        "company": "Sterlite Technologies Ltd",
+        "sector": "Technology",
+        "allocation_pct": 2.97
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:33.596272Z"
+  },
+  {
+    "fund_name": "Edelweiss Mid Cap Direct Plan Growth",
+    "source_url": "https://groww.in/mutual-funds/edelweiss-mid-and-small-cap-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 94.3,
+    "aum_in_crores": 4560.8,
+    "expense_ratio_pct": 0.8,
+    "exit_load_text": "1% if redeemed within 90 days from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.5,
+      "total_reviews": 2154
+    },
+    "fund_managers": [
+      {
+        "name": "Trideep Bhattacharya",
+        "tenure_start": "2021-06-15",
+        "education": "B.Tech in Computer Science, MBA in Finance from SPJIMR",
+        "work_history": [
+          "Chief Investment Officer (CIO) - Equities at Edelweiss AMC since 2021.",
+          "Previously worked as Senior Portfolio Manager at State Street Global Advisors in London.",
+          "Over 22 years of global and domestic equity research and investment management experience."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 30.12,
+      "5_year_return_pct": 26.5,
+      "7_year_return_pct": 19.8,
+      "10_year_return_pct": 22.15
+    },
+    "top_holdings": [
+      {
+        "company": "Others CBLO",
+        "sector": "Unspecified",
+        "allocation_pct": 4.15
+      },
+      {
+        "company": "Multi Commodity Exchange Of India Ltd",
+        "sector": "Financial",
+        "allocation_pct": 3.15
+      },
+      {
+        "company": "The Federal Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 2.88
+      },
+      {
+        "company": "BSE Ltd",
+        "sector": "Financial",
+        "allocation_pct": 2.65
+      },
+      {
+        "company": "AU Small Finance Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 2.22
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:39.161221Z"
+  },
+  {
+    "fund_name": "Zerodha Multi Asset Passive FoF Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/zerodha-multi-asset-passive-fof-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 12.4,
+    "aum_in_crores": 350.2,
+    "expense_ratio_pct": 0.24,
+    "exit_load_text": "Nil Exit Load.",
+    "public_rating": {
+      "stars": 4.2,
+      "total_reviews": 692
+    },
+    "fund_managers": [
+      {
+        "name": "Kedarnath Mirajkar",
+        "tenure_start": "2023-11-10",
+        "education": "M.Com from Pune University, CFA Charterholder",
+        "work_history": [
+          "Fund Manager of Passive Investments at Zerodha AMC since 2023.",
+          "Previously Analyst at Aditya Birla Sun Life Mutual Fund.",
+          "Specializes in indexing, multi-asset passive models, and tracking error mitigation strategies."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": null,
+      "5_year_return_pct": null,
+      "7_year_return_pct": null,
+      "10_year_return_pct": null
+    },
+    "top_holdings": [
+      {
+        "company": "Zerodha Nifty Midcap 150 ETF - Growth",
+        "sector": "Unspecified",
+        "allocation_pct": 31.27
+      },
+      {
+        "company": "Zerodha Nifty 100 ETF - Growth",
+        "sector": "Unspecified",
+        "allocation_pct": 29.1
+      },
+      {
+        "company": "Zerodha Gold ETF - Growth",
+        "sector": "Unspecified",
+        "allocation_pct": 24.89
+      },
+      {
+        "company": "Zerodha Nifty 8-13 Yr G-Sec ETF - Growth",
+        "sector": "Unspecified",
+        "allocation_pct": 15.01
+      },
+      {
+        "company": "Reverse Repo",
+        "sector": "Unspecified",
+        "allocation_pct": 0.38
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:42.769158Z"
+  },
+  {
+    "fund_name": "Parag Parikh Flexi Cap Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/parag-parikh-long-term-value-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 84.6,
+    "aum_in_crores": 65240.5,
+    "expense_ratio_pct": 0.69,
+    "exit_load_text": "2% if redeemed within 365 days; 1% if redeemed between 366-730 days; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.8,
+      "total_reviews": 23412
+    },
+    "fund_managers": [
+      {
+        "name": "Rajeev Thakkar",
+        "tenure_start": "2013-05-24",
+        "education": "Chartered Accountant (CA), CFA Charterholder, Grad CWA",
+        "work_history": [
+          "Chief Investment Officer (CIO) and Equity Fund Manager at PPFAS Mutual Fund since inception in 2013.",
+          "Associated with Parag Parikh Financial Advisory Services since 2001.",
+          "Over 25 years of experience in investment banking, equity research, and portfolio advisory services."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 24.15,
+      "5_year_return_pct": 25.8,
+      "7_year_return_pct": 19.9,
+      "10_year_return_pct": 21.45
+    },
+    "top_holdings": [
+      {
+        "company": "HDFC Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 7.94
+      },
+      {
+        "company": "Power Grid Corporation of India Ltd",
+        "sector": "Energy & Utilities",
+        "allocation_pct": 6.99
+      },
+      {
+        "company": "Coal India Ltd",
+        "sector": "Materials",
+        "allocation_pct": 5.95
+      },
+      {
+        "company": "ITC Ltd",
+        "sector": "Consumer Staples",
+        "allocation_pct": 5.43
+      },
+      {
+        "company": "ICICI Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 4.92
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:46.582021Z"
+  },
+  {
+    "fund_name": "Nippon India Small Cap Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/nippon-india-small-cap-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 164.5,
+    "aum_in_crores": 51230.4,
+    "expense_ratio_pct": 0.95,
+    "exit_load_text": "1% if redeemed within 1 month (30 days) from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.8,
+      "total_reviews": 8943
+    },
+    "fund_managers": [
+      {
+        "name": "Samir Rachh",
+        "tenure_start": "2017-01-01",
+        "education": "B.Com, Mumbai University",
+        "work_history": [
+          "Senior Equity Fund Manager at Nippon India Mutual Fund since 2017.",
+          "Previously Head of Equity Research at Hinduja Group.",
+          "Over 25 years of extensive experience in equity research, mid-and-small cap analysis, and portfolio strategies."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 32.45,
+      "5_year_return_pct": 28.12,
+      "7_year_return_pct": 21.9,
+      "10_year_return_pct": 24.15
+    },
+    "top_holdings": [
+      {
+        "company": "Repo",
+        "sector": "Unspecified",
+        "allocation_pct": 2.7
+      },
+      {
+        "company": "HDFC Bank Ltd",
+        "sector": "Financial",
+        "allocation_pct": 1.89
+      },
+      {
+        "company": "Multi Commodity Exchange Of India Ltd",
+        "sector": "Financial",
+        "allocation_pct": 1.76
+      },
+      {
+        "company": "Bharat Heavy Electricals Ltd",
+        "sector": "Industrials",
+        "allocation_pct": 1.67
+      },
+      {
+        "company": "TD Power Systems Ltd",
+        "sector": "Industrials",
+        "allocation_pct": 1.54
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:50.786820Z"
+  },
+  {
+    "fund_name": "Nippon India Multi Asset Allocation Fund Direct Growth",
+    "source_url": "https://groww.in/mutual-funds/nippon-india-multi-asset-allocation-fund-direct-growth",
+    "doc_type": "Factsheet",
+    "current_nav": 15.6,
+    "aum_in_crores": 3140.7,
+    "expense_ratio_pct": 0.89,
+    "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
+    "public_rating": {
+      "stars": 4.6,
+      "total_reviews": 1845
+    },
+    "fund_managers": [
+      {
+        "name": "Ashwin Sheth",
+        "tenure_start": "2020-08-20",
+        "education": "B.E. in Electronics, MBA in Finance, CFA Charterholder",
+        "work_history": [
+          "Fund Manager of Multi-Asset & Commodity portfolios at Nippon India Mutual Fund since 2020.",
+          "Previously Commodities Specialist at Edelweiss Securities.",
+          "Expert in multi-asset asset allocation models, gold arbitrage, and derivative hedging strategies with 15 years experience."
+        ]
+      }
+    ],
+    "performance_timelines": {
+      "3_year_return_pct": 19.8,
+      "5_year_return_pct": 16.4,
+      "7_year_return_pct": 13.9,
+      "10_year_return_pct": 15.12
+    },
+    "top_holdings": [
+      {
+        "company": "Nippon India ETF Gold BeES",
+        "sector": "--",
+        "allocation_pct": 8.15
+      },
+      {
+        "company": "iShares MSCI World ETF",
+        "sector": "Financial",
+        "allocation_pct": 5.23
+      },
+      {
+        "company": "ICICI Bank Ltd.",
+        "sector": "Financial",
+        "allocation_pct": 3.6
+      },
+      {
+        "company": "Nippon India Silver ETF - Growth",
+        "sector": "--",
+        "allocation_pct": 3.24
+      },
+      {
+        "company": "HDFC Bank Ltd.",
+        "sector": "Financial",
+        "allocation_pct": 2.39
+      }
+    ],
+    "last_scraped_timestamp": "2026-06-03T08:11:55.244180Z"
+  }
+]

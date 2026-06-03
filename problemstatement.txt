@@ -1,0 +1,66 @@
+Problem Statement: AI-Powered Retrieval-Augmented Generation (RAG) Mutual Fund FAQ Chatbot
+
+1. Background
+Mutual funds are complex, heavily regulated financial instruments. Investors, advisors, and relationship managers must constantly parse and understand a massive volume of dense, unstructured, and rapidly changing financial literature. Key document types include Scheme Information Documents (SIDs), Key Information Memorandums (KIMs), Statement of Additional Information (SAIs), and Monthly Factsheets / Scheme Product Pages.
+
+Traditional keyword search systems and rule-based chatbots are highly inadequate. They cannot interpret natural language financial queries, synthesize answers across multiple documents, or explain complex financial concepts in simple terms. Meanwhile, raw Large Language Models (LLMs) suffer from hallucinations and lack domain-specific, real-time knowledge (such as current NAVs, expense ratios, asset allocations, fund manager histories, or public ratings), making them unsafe for financial advisory applications.
+
+2. Objective
+Design and implement a highly accurate, compliant, and responsive Retrieval-Augmented Generation (RAG) chatbot that serves as a secure virtual financial assistant. The chatbot must:
+1. Ingest and parse complex, multi-format mutual fund documents and web pages.
+2. Retrieve highly relevant, context-rich information in response to natural language queries.
+3. Generate precise, grounded, and human-like answers strictly using the retrieved context.
+4. Provide verifiable source citations (scheme name, URL, section) for every answer to ensure compliance and build user trust.
+5. Offer a beautiful, modern, and intuitive conversational web interface supporting advanced data visualization features (such as interactive multi-fund comparison charts).
+
+3. Scoped Data Sources (Target URLs)
+For the current phase of the project, the RAG chatbot's knowledge base is strictly restricted to data ingested from the following 8 Groww mutual fund scheme detail pages:
+1. Bandhan Small Cap Fund (Direct Growth):
+   https://groww.in/mutual-funds/bandhan-small-cap-fund-direct-growth
+2. Bandhan Midcap Fund (Direct Growth):
+   https://groww.in/mutual-funds/bandhan-midcap-fund-direct-growth
+3. Bandhan Multi Cap Fund (Direct Growth):
+   https://groww.in/mutual-funds/bandhan-multi-cap-fund-direct-growth
+4. Edelweiss Mid and Small Cap Fund (Direct Growth):
+   https://groww.in/mutual-funds/edelweiss-mid-and-small-cap-fund-direct-growth
+5. Zerodha Multi Asset Passive FoF (Direct Growth):
+   https://groww.in/mutual-funds/zerodha-multi-asset-passive-fof-direct-growth
+6. Parag Parikh Long Term Value Fund (Direct Growth):
+   https://groww.in/mutual-funds/parag-parikh-long-term-value-fund-direct-growth
+7. Nippon India Small Cap Fund (Direct Growth):
+   https://groww.in/mutual-funds/nippon-india-small-cap-fund-direct-growth
+8. Nippon India Multi Asset Allocation Fund (Direct Growth):
+   https://groww.in/mutual-funds/nippon-india-multi-asset-allocation-fund-direct-growth
+
+4. Key Modules & Functional Requirements
+
+4.1. Advanced Data Ingestion & Preprocessing
+- Web Scraping & Parsing: Robustly scrape and parse structure-rich HTML pages from the target Groww URLs, extracting key metrics and qualitative details:
+  * Quantitative Metrics: Net Asset Value (NAV), Assets Under Management (AUM), Expense Ratio, Exit Load, Asset Allocation, Top Holdings, and chronological historical returns over diverse time horizons (3 years, 5 years, 7 years, and 10 years).
+  * Qualitative / Trust Details: Current Fund Manager name(s), their specific education/tenure, comprehensive Fund Manager Work History (past employers, other schemes managed), and official Groww Public Ratings (Star Ratings and number of ratings).
+- Semantic Chunking: Break down scraped content into chunks that preserve semantic coherence, keeping tabular structures, biographical descriptions, and historical performance timelines intact.
+- Metadata Enrichment: Tag each chunk with source identifiers (Scheme Name, Source URL, Metric Category, Last Scraped Timestamp).
+
+4.2. Knowledge Base & Vector Indexing
+- Embedding Generation: Convert chunks into high-density vector representations using optimized embedding models.
+- Hybrid Search Indexing: Build a dual-indexing system combining dense vector search (for semantic queries, such as "Who manages the Nippon Small Cap Fund and what is their background?") with sparse search (like BM25, for exact keyword matches such as fund names or specific ratings).
+- Vector Storage: Store vectors and corresponding metadata in a production-grade vector database (e.g., ChromaDB, pgvector, or Pinecone).
+
+4.3. Smart Retrieval & Re-ranking
+- Context Query Processing: Formulate and expand user queries to optimize retrieval performance.
+- Re-ranking Pipeline: Apply a secondary re-ranking model (e.g., Cohere Rerank or Cross-Encoder) to order retrieved chunks based on strict relevance to the user's query, filtering out noise.
+- Context Aggregation: Assemble the top-ranked chunks into a coherent block of background information to be passed to the LLM.
+
+4.4. Grounded Response Generation
+- Prompt Guardrails: Design system instructions that strictly command the LLM to only answer based on the provided context. If the answer is not in the context, the LLM must state that it cannot find the information rather than guessing.
+- Citation Mapping: Automatically extract citation metadata (e.g., "Nippon India Small Cap Fund, Source: Groww URL") from the retrieved chunks and embed them naturally within the AI-generated response.
+- Safety & Compliance Filtering: Implement checks to filter out general investment advice or performance predictions, adhering to regulatory guidelines.
+
+4.5. Conversational Web Interface & Visualizations
+- Premium UI/UX: Design a highly interactive, responsive, and visually stunning conversational web application.
+- Rich Content Rendering: Render answers with markdown formatting, including neat tables for financial metrics, bold text for key terms, graphical representations of fund ratings, and highlighted clickable citation badges linking back to the source Groww URL.
+- Interactive Multi-Fund Comparison Widget:
+  * When a user asks to compare schemes, the chatbot must render an interactive, side-by-side performance comparison chart comparing up to 3 selected funds.
+  * The chart must support timeline selection for 3 years, 5 years, 7 years, and 10 years (with dynamic checks to hide or alert if a fund was not active during that period).
+  * The chart must feature high-performance interactive controls, allowing users to hover over any point in the timeline to view exact comparative returns or values across all three funds simultaneously.
+- Conversation History: Maintain secure, context-aware session memory to support follow-up questions while preventing prompt-injection attacks.
