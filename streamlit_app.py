@@ -1,3 +1,12 @@
+import sys
+# Override sqlite3 with pysqlite3 for ChromaDB compatibility on Linux (Streamlit Cloud)
+if sys.platform.startswith("linux"):
+    try:
+        __import__('pysqlite3')
+        sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+    except ImportError:
+        pass
+
 import os
 import re
 import json
