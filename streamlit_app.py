@@ -631,8 +631,224 @@ selected_fund_key = query_params.get("fund", "nippon-india-small-cap-fund-direct
 if selected_fund_key not in FUND_VISUAL_METADATA:
     selected_fund_key = "nippon-india-small-cap-fund-direct-growth"
 
-# Compile Sidebar HTML
-sidebar_html = f"""
+# Compile Sidebar HTML — CSS is embedded directly so it works in Streamlit's sidebar scope
+sidebar_html = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+.sidebar-container {
+    padding: 24px 16px;
+    background-color: #10131a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-sizing: border-box;
+}
+
+.brand-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 12px;
+}
+
+.brand-icon-square {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    background-color: #a8c8ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-svg-icon {
+    width: 24px;
+    height: 24px;
+    fill: #003061;
+}
+
+.brand-name {
+    color: #e0e2ec;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    font-family: 'Outfit', sans-serif;
+}
+
+.brand-subtitle {
+    color: #8a919f;
+    font-size: 0.70rem;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.funds-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.fund-card {
+    display: flex;
+    align-items: center;
+    padding: 11px 14px;
+    border-radius: 12px;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-sizing: border-box;
+}
+
+.fund-card:hover {
+    background: rgba(255, 255, 255, 0.055);
+    border-color: rgba(0, 218, 243, 0.5);
+    transform: translateY(-1px);
+}
+
+.fund-card.active {
+    background: linear-gradient(90deg, #00daf3 0%, #00f2ff 100%) !important;
+    border: none !important;
+}
+
+.fund-card-icon-wrap {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.fund-card-icon {
+    width: 17px;
+    height: 17px;
+    stroke: #8a919f;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.fund-card.active .fund-card-icon {
+    stroke: #003061;
+}
+
+.fund-card-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.fund-card-name {
+    color: #e0e2ec;
+    font-size: 0.86rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fund-card.active .fund-card-name {
+    color: #0a0e15;
+    font-weight: 700;
+}
+
+.fund-card-nav {
+    color: #8a919f;
+    font-size: 0.70rem;
+    margin-top: 1px;
+}
+
+.fund-card.active .fund-card-nav {
+    color: rgba(10, 14, 21, 0.75);
+}
+
+.fund-card-rating {
+    color: #e0e2ec;
+    font-size: 0.76rem;
+    font-weight: 600;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+
+.fund-card.active .fund-card-rating {
+    color: #0a0e15;
+    font-weight: 700;
+}
+
+.transactions-section {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding-bottom: 8px;
+}
+
+.section-label {
+    color: #8a919f;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.tx-card {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 9px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.tx-lhs { display: flex; flex-direction: column; gap: 1px; }
+.tx-rhs { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+
+.tx-name { color: #e0e2ec; font-size: 0.80rem; font-weight: 600; }
+.tx-date { color: #8a919f; font-size: 0.66rem; }
+
+.tx-amt { font-size: 0.80rem; font-weight: 700; }
+.tx-amt.pos { color: #00daf3; }
+.tx-amt.neg { color: #feb019; }
+
+.tx-badge { font-size: 0.60rem; font-weight: 700; }
+.tx-badge.pos { color: #00daf3; }
+.tx-badge.neg { color: #feb019; }
+
+.see-all-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3px;
+}
+
+.see-all-link {
+    color: #8a919f;
+    text-decoration: none;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 12px;
+    margin-top: 16px;
+    text-align: center;
+    color: rgba(138, 145, 159, 0.45);
+    font-size: 0.66rem;
+    line-height: 1.4;
+}
+</style>
+
 <div class="sidebar-container">
     <!-- Brand Header -->
     <div class="brand-header">
@@ -642,15 +858,18 @@ sidebar_html = f"""
                 <path d="M2 20h20v2H2z"/>
             </svg>
         </div>
-        <div class="brand-text-container">
+        <div>
             <div class="brand-name">WealthSearchAI</div>
             <div class="brand-subtitle">Scoped Groww RAG Assistant</div>
         </div>
     </div>
-    
+
     <!-- Funds List -->
     <div class="funds-list-container">
 """
+
+# current active fund for link generation
+_active_key = selected_fund_key  # snapshot for f-string use below
 
 for key, meta in FUND_VISUAL_METADATA.items():
     is_active = (key == selected_fund_key)
@@ -663,13 +882,13 @@ for key, meta in FUND_VISUAL_METADATA.items():
     
     sidebar_html += f"""
         <a href="?fund={key}" target="_self" class="fund-card {active_class}">
-            <div class="fund-card-icon-container">
+            <div class="fund-card-icon-wrap">
                 <svg class="fund-card-icon" viewBox="0 0 24 24">
                     {meta['icon_svg']}
                 </svg>
             </div>
             <div class="fund-card-details">
-                <div class="fund-card-title">{meta['visual_name']}</div>
+                <div class="fund-card-name">{meta['visual_name']}</div>
                 <div class="fund-card-nav">NAV: {nav_val}</div>
             </div>
             <div class="fund-card-rating">{rating_val} ★</div>
@@ -681,40 +900,40 @@ sidebar_html += """
 
     <!-- Recent Transactions Section -->
     <div class="transactions-section">
-        <div class="section-title">RECENT TRANSACTIONS</div>
-        <div class="transaction-card">
-            <div class="tx-left">
-                <div class="tx-title">Buy: Bluechip Fund</div>
+        <div class="section-label">RECENT TRANSACTIONS</div>
+        <div class="tx-card">
+            <div class="tx-lhs">
+                <div class="tx-name">Buy: Bluechip Fund</div>
                 <div class="tx-date">24 Oct 2023</div>
             </div>
-            <div class="tx-right">
-                <div class="tx-amount success">+₹5,000.00</div>
-                <div class="tx-status success">● SUCCESS</div>
+            <div class="tx-rhs">
+                <div class="tx-amt pos">+&#8377;5,000.00</div>
+                <div class="tx-badge pos">&#9679; SUCCESS</div>
             </div>
         </div>
-        <div class="transaction-card">
-            <div class="tx-left">
-                <div class="tx-title">Sell: Arbitrage Fund</div>
+        <div class="tx-card">
+            <div class="tx-lhs">
+                <div class="tx-name">Sell: Arbitrage Fund</div>
                 <div class="tx-date">21 Oct 2023</div>
             </div>
-            <div class="tx-right">
-                <div class="tx-amount settled">-₹12,450.00</div>
-                <div class="tx-status settled">● SETTLED</div>
+            <div class="tx-rhs">
+                <div class="tx-amt neg">-&#8377;12,450.00</div>
+                <div class="tx-badge neg">&#9679; SETTLED</div>
             </div>
         </div>
-        <div class="transaction-card">
-            <div class="tx-left">
-                <div class="tx-title">SIP: Midcap Opp.</div>
+        <div class="tx-card">
+            <div class="tx-lhs">
+                <div class="tx-name">SIP: Midcap Opp.</div>
                 <div class="tx-date">15 Oct 2023</div>
             </div>
-            <div class="tx-right">
-                <div class="tx-amount success">+₹2,000.00</div>
-                <div class="tx-status success">● PROCESSED</div>
+            <div class="tx-rhs">
+                <div class="tx-amt pos">+&#8377;2,000.00</div>
+                <div class="tx-badge pos">&#9679; PROCESSED</div>
             </div>
         </div>
-        <div class="see-all-container">
+        <div class="see-all-row">
             <a href="#" class="see-all-link">See All &gt;</a>
-            <svg class="filter-icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #8a919f; stroke-width: 2; fill: none;">
+            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#8a919f;stroke-width:2;fill:none;">
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
             </svg>
         </div>
@@ -722,7 +941,7 @@ sidebar_html += """
 
     <!-- Sidebar Footer -->
     <div class="sidebar-footer">
-        Premium Mutual Fund AI<br/>v2.4.0–STABLE
+        Premium Mutual Fund AI<br/>v2.4.0&#8211;STABLE
     </div>
 </div>
 """
