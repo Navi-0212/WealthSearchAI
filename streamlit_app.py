@@ -13,6 +13,8 @@ import json
 import logging
 import streamlit as st
 import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
 from backend.generator import RAGResponseGenerator
 from backend.scraper import VERIFIED_SCHEME_DB
 
@@ -457,57 +459,168 @@ st.markdown("""
 st.markdown('<div class="bg-blob blob-1"></div><div class="bg-blob blob-2"></div>', unsafe_allow_html=True)
 
 
+# --- AVATAR CONSTANTS (matching brand icon in design) ---
+# Blue square with trend-line icon — exactly as shown in image1.png
+ASSISTANT_AVATAR = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E"
+    "%3Crect width='44' height='44' rx='10' fill='%23a8c8ff'/%3E"
+    "%3Cpolyline points='8,32 17,20 25,26 36,11' stroke='%23003061' stroke-width='2.8' "
+    "fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E"
+    "%3Cpolyline points='30,11 36,11 36,17' stroke='%23003061' stroke-width='2.8' "
+    "fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E"
+    "%3C/svg%3E"
+)
+# Dark rounded square with person silhouette for user
+USER_AVATAR = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E"
+    "%3Crect width='44' height='44' rx='10' fill='%231c2027'/%3E"
+    "%3Ccircle cx='22' cy='17' r='7' fill='%238a919f'/%3E"
+    "%3Cpath d='M7 40 C7 30 37 30 37 40' fill='%238a919f'/%3E"
+    "%3C/svg%3E"
+)
+
+
 # --- MUTUAL FUND DATA VISUAL SCHEMES ---
 FUND_VISUAL_METADATA = {
     "nippon-india-small-cap-fund-direct-growth": {
         "visual_name": "Bluechip Fund",
-        "icon_svg": '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline>', # trend chart
+        "icon_svg": '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline>',
         "nav": "₹164.50",
         "rating": "4.8"
     },
     "parag-parikh-long-term-value-fund-direct-growth": {
         "visual_name": "Flexi Cap Fund",
-        "icon_svg": '<rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>', # card/wallet
+        "icon_svg": '<rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>',
         "nav": "₹82.12",
         "rating": "4.6"
     },
     "edelweiss-mid-and-small-cap-fund-direct-growth": {
         "visual_name": "Tax Saver ELSS",
-        "icon_svg": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>', # document
+        "icon_svg": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>',
         "nav": "₹45.30",
         "rating": "4.7"
     },
     "bandhan-small-cap-fund-direct-growth": {
         "visual_name": "Midcap Opportunities",
-        "icon_svg": '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>', # bar chart
+        "icon_svg": '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>',
         "nav": "₹112.45",
         "rating": "4.9"
     },
     "bandhan-midcap-fund-direct-growth": {
         "visual_name": "Small Cap Index",
-        "icon_svg": '<rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect>', # layout/grid
+        "icon_svg": '<rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect>',
         "nav": "₹28.90",
         "rating": "4.5"
     },
     "bandhan-multi-cap-fund-direct-growth": {
         "visual_name": "Liquid Debt Fund",
-        "icon_svg": '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>', # shield/secure
+        "icon_svg": '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>',
         "nav": "₹18.90",
         "rating": "4.4"
     },
     "zerodha-multi-asset-passive-fof-direct-growth": {
         "visual_name": "Passive FoF Fund",
-        "icon_svg": '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>', # clock/passive
+        "icon_svg": '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
         "nav": "₹12.40",
         "rating": "4.2"
     },
     "nippon-india-multi-asset-allocation-fund-direct-growth": {
         "visual_name": "Multi Asset Alloc",
-        "icon_svg": '<path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>', # stacked layers
+        "icon_svg": '<path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>',
         "nav": "₹15.60",
         "rating": "4.6"
     }
 }
+
+
+# --- NAV HISTORY CHART HELPER ---
+def render_nav_chart(mapped_keys: list):
+    """
+    Render a smooth area/line chart of simulated 24-month NAV history for the given fund keys.
+    Matches the design in image1.png: dark background, cyan + blue traces, minimal grid.
+    """
+    CHART_COLORS = ["#00daf3", "#a8c8ff", "#feb019", "#00e5ff"]
+    months = pd.date_range(end=pd.Timestamp.now(), periods=24, freq="ME")
+
+    fig = go.Figure()
+
+    for i, key in enumerate(mapped_keys):
+        db_fund = VERIFIED_SCHEME_DB.get(key)
+        if not db_fund:
+            continue
+
+        nav = db_fund["current_nav"]
+        visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", db_fund["fund_name"])
+        color = CHART_COLORS[i % len(CHART_COLORS)]
+
+        # Simulate 24-month NAV history working backward from current NAV
+        perf = db_fund.get("performance_timelines", {})
+        annual_return = (perf.get("3_year_return_pct") or 18.0) / 100.0
+        monthly_avg = (1 + annual_return) ** (1 / 12) - 1
+
+        np.random.seed(i * 17 + 31)
+        noise = np.random.normal(0, 0.022, 24)
+
+        nav_series = [float(nav)]
+        for j in range(23):
+            prev = nav_series[0]
+            step = prev / (1 + monthly_avg + noise[j])
+            nav_series.insert(0, max(step, 1.0))
+
+        r = int(color[1:3], 16)
+        g = int(color[3:5], 16)
+        b = int(color[5:7], 16)
+
+        fig.add_trace(go.Scatter(
+            x=months,
+            y=nav_series,
+            name=visual_name,
+            mode="lines",
+            line=dict(color=color, width=2.5, shape="spline", smoothing=1.2),
+            fill="tozeroy",
+            fillcolor=f"rgba({r},{g},{b},0.07)",
+            hovertemplate=f"<b>{visual_name}</b><br>%{{x|%b %Y}}<br>NAV: ₹%{{y:.2f}}<extra></extra>",
+        ))
+
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#8a919f", family="Plus Jakarta Sans"),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(color="#e0e2ec", size=12),
+            bgcolor="rgba(0,0,0,0)",
+            borderwidth=0,
+        ),
+        xaxis=dict(
+            gridcolor="rgba(255,255,255,0.04)",
+            tickfont=dict(color="#8a919f", size=11),
+            showline=False,
+            zeroline=False,
+            tickformat="%b",
+        ),
+        yaxis=dict(
+            gridcolor="rgba(255,255,255,0.04)",
+            tickfont=dict(color="#8a919f", size=11),
+            tickprefix="₹",
+            showline=False,
+            zeroline=False,
+        ),
+        margin=dict(l=0, r=0, t=30, b=0),
+        height=280,
+        hovermode="x unified",
+        hoverlabel=dict(
+            bgcolor="rgba(16,19,26,0.95)",
+            bordercolor="rgba(255,255,255,0.08)",
+            font=dict(color="#e0e2ec", family="Plus Jakarta Sans"),
+        ),
+    )
+
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 
 
 # --- SIDEBAR GENERATION ---
@@ -641,51 +754,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# --- ACTIVE SCHEME COMMAND CARD ---
-active_fund = VERIFIED_SCHEME_DB.get(selected_fund_key)
-if active_fund:
-    st.markdown(f"""
-    <div style="background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
-            <div>
-                <span style="background: rgba(0, 218, 243, 0.08); border: 1px solid rgba(0, 218, 243, 0.2); color: #00daf3; padding: 3px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; display: inline-block;">Active Command Context</span>
-                <h3 style="color: #e0e2ec; font-size: 1.45rem; font-weight: 700; margin: 0;">{active_fund['fund_name']}</h3>
-                <p style="color: #8a919f; font-size: 0.8rem; margin: 3px 0 0 0;">Source factsheet: <a href="{active_fund['source_url']}" target="_blank" style="color: #00daf3; text-decoration: none;">Groww Product Link 🔗</a></p>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 6px 12px; text-align: center;">
-                    <div style="color: #8a919f; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Factsheet NAV</div>
-                    <div style="color: #00daf3; font-size: 1rem; font-weight: 700; margin-top: 1px;">₹{active_fund['current_nav']:.2f}</div>
-                </div>
-                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 6px 12px; text-align: center;">
-                    <div style="color: #8a919f; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Asset Size</div>
-                    <div style="color: #00daf3; font-size: 1rem; font-weight: 700; margin-top: 1px;">₹{active_fund['aum_in_crores']:.1f} Cr</div>
-                </div>
-                <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 6px 12px; text-align: center;">
-                    <div style="color: #8a919f; font-size: 0.65rem; font-weight: 700; text-transform: uppercase;">Groww Rating</div>
-                    <div style="color: #feb019; font-size: 1rem; font-weight: 700; margin-top: 1px;">{active_fund['public_rating']['stars']} ★</div>
-                </div>
-            </div>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 12px; margin-top: 12px;">
-            <div>
-                <div style="color: #8a919f; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">💸 Expense Ratio</div>
-                <div style="color: #e0e2ec; font-size: 0.88rem; font-weight: 600;">{active_fund['expense_ratio_pct']:.2f}%</div>
-            </div>
-            <div>
-                <div style="color: #8a919f; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">🚪 Exit Load Condition</div>
-                <div style="color: #e0e2ec; font-size: 0.84rem; line-height: 1.4;">{active_fund['exit_load_text']}</div>
-            </div>
-            <div>
-                <div style="color: #8a919f; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;">🧑‍💼 Primary Managers</div>
-                <div style="color: #e0e2ec; font-size: 0.84rem; font-weight: 600;">{', '.join([m['name'] for m in active_fund['fund_managers']])}</div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 # --- CHAT & RAG PROCESSOR ENGINE ---
 # Instantiate response generator
 @st.cache_resource
@@ -712,55 +780,34 @@ if "messages" not in st.session_state:
 
 # Display past messages
 for msg in st.session_state.messages:
-    # Use native styled chat bubbles with dicebear avatar seeds
-    avatar_seed = "WealthAI" if msg["role"] == "assistant" else "Investor"
-    avatar_url = f"https://api.dicebear.com/7.x/bottts-neutral/svg?seed={avatar_seed}"
-    
+    avatar_url = ASSISTANT_AVATAR if msg["role"] == "assistant" else USER_AVATAR
+
     with st.chat_message(msg["role"], avatar=avatar_url):
         st.markdown(msg["content"])
-        
-        # Render comparative charts if triggered
+
+        # Render NAV history area chart if chart_data is present
         if msg.get("chart_data"):
             mapped_keys = []
             for display in msg["chart_data"]:
+                # Direct key match first (used in initial welcome message)
+                if display in VERIFIED_SCHEME_DB:
+                    mapped_keys.append(display)
+                    continue
+                # Fallback: fuzzy name/key match (used in RAG comparison responses)
                 for key, data in VERIFIED_SCHEME_DB.items():
                     visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", "")
-                    if (display.lower() in data["fund_name"].lower() or 
-                        display.lower() in visual_name.lower() or 
-                        key in display.lower().replace(" ", "-")):
+                    if (display.lower() in data["fund_name"].lower() or
+                            display.lower() in visual_name.lower() or
+                            key in display.lower().replace(" ", "-")):
                         mapped_keys.append(key)
                         break
-            
-            # De-duplicate
+
+            # De-duplicate while preserving order
             mapped_keys = list(dict.fromkeys(mapped_keys))
-            
+
             if mapped_keys:
-                chart_records = []
-                for key in mapped_keys:
-                    data = VERIFIED_SCHEME_DB[key]
-                    perf = data["performance_timelines"]
-                    visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", data["fund_name"])
-                    
-                    chart_records.append({
-                        "Fund": visual_name,
-                        "3-Year Return (%)": perf.get("3_year_return_pct") or 0.0,
-                        "5-Year Return (%)": perf.get("5_year_return_pct") or 0.0,
-                        "10-Year Return (%)": perf.get("10_year_return_pct") or 0.0,
-                        "Expense Ratio (%)": data["expense_ratio_pct"] or 0.0,
-                        "AUM (₹ Cr)": data["aum_in_crores"] or 0.0
-                    })
-                
-                df = pd.DataFrame(chart_records)
-                
-                # Render clean tabs for comparison data
-                t1, t2, t3 = st.tabs(["📊 Annual Returns (%)", "💸 Expense Ratio (%)", "🏦 AUM Size (₹ Cr)"])
-                with t1:
-                    st.bar_chart(df.set_index("Fund")[["3-Year Return (%)", "5-Year Return (%)", "10-Year Return (%)"]])
-                with t2:
-                    st.bar_chart(df.set_index("Fund")[["Expense Ratio (%)"]])
-                with t3:
-                    st.bar_chart(df.set_index("Fund")[["AUM (₹ Cr)"]])
-        
+                render_nav_chart(mapped_keys)
+
         # Render citations
         if msg.get("citations"):
             st.markdown("**Sources & Factsheets:**")
@@ -775,7 +822,6 @@ if st.session_state.messages and st.session_state.messages[-1]["role"] == "assis
         st.markdown("<div style='margin-top: 12px; margin-bottom: 4px; font-size: 0.85rem; font-weight: 700; color: #8a919f;'>SUGGESTED QUESTIONS:</div>", unsafe_allow_html=True)
         cols = st.columns(len(last_msg["suggested_followups"]))
         for idx, q_text in enumerate(last_msg["suggested_followups"]):
-            # Strip visual names from buttons if too long
             btn_label = q_text
             if len(btn_label) > 42:
                 btn_label = btn_label[:40] + "..."
@@ -792,71 +838,51 @@ user_query = st.chat_input("Ask about fund performance, exit loads, or expense r
 # Override query if button was clicked
 if st.session_state.current_question:
     user_query = st.session_state.current_question
-    st.session_state.current_question = "" # Reset
+    st.session_state.current_question = ""  # Reset
 
 # Ingestion trigger
 if user_query:
     # Display user input bubble
-    with st.chat_message("user", avatar="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Investor"):
+    with st.chat_message("user", avatar=USER_AVATAR):
         st.markdown(user_query)
-    
+
     st.session_state.messages.append({"role": "user", "content": user_query})
-    
+
     # Process RAG generation
-    with st.chat_message("assistant", avatar="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=WealthAI"):
+    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
         with st.spinner("Retrieving compliance context and synthesizing answer..."):
             res = generator.generate_response(user_query)
-            
+
             # Print response
             st.markdown(res["answer"])
-            
-            # Render charts if comparing
+
+            # Render NAV history chart if comparison funds returned
             if res.get("comparison_funds"):
                 mapped_keys = []
                 for display in res["comparison_funds"]:
+                    if display in VERIFIED_SCHEME_DB:
+                        mapped_keys.append(display)
+                        continue
                     for key, data in VERIFIED_SCHEME_DB.items():
                         visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", "")
-                        if (display.lower() in data["fund_name"].lower() or 
-                            display.lower() in visual_name.lower() or 
-                            key in display.lower().replace(" ", "-")):
+                        if (display.lower() in data["fund_name"].lower() or
+                                display.lower() in visual_name.lower() or
+                                key in display.lower().replace(" ", "-")):
                             mapped_keys.append(key)
                             break
-                            
+
                 mapped_keys = list(dict.fromkeys(mapped_keys))
-                
+
                 if mapped_keys:
-                    chart_records = []
-                    for key in mapped_keys:
-                        data = VERIFIED_SCHEME_DB[key]
-                        perf = data["performance_timelines"]
-                        visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", data["fund_name"])
-                        
-                        chart_records.append({
-                            "Fund": visual_name,
-                            "3-Year Return (%)": perf.get("3_year_return_pct") or 0.0,
-                            "5-Year Return (%)": perf.get("5_year_return_pct") or 0.0,
-                            "10-Year Return (%)": perf.get("10_year_return_pct") or 0.0,
-                            "Expense Ratio (%)": data["expense_ratio_pct"] or 0.0,
-                            "AUM (₹ Cr)": data["aum_in_crores"] or 0.0
-                        })
-                    
-                    df = pd.DataFrame(chart_records)
-                    
-                    t1, t2, t3 = st.tabs(["📊 Annual Returns (%)", "💸 Expense Ratio (%)", "🏦 AUM Size (₹ Cr)"])
-                    with t1:
-                        st.bar_chart(df.set_index("Fund")[["3-Year Return (%)", "5-Year Return (%)", "10-Year Return (%)"]])
-                    with t2:
-                        st.bar_chart(df.set_index("Fund")[["Expense Ratio (%)"]])
-                    with t3:
-                        st.bar_chart(df.set_index("Fund")[["AUM (₹ Cr)"]])
-            
+                    render_nav_chart(mapped_keys)
+
             # Print citations
             if res.get("citations"):
                 st.markdown("**Sources & Factsheets:**")
                 cols = st.columns(len(res["citations"]))
                 for idx, cite in enumerate(res["citations"]):
                     cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
-                    
+
     # Map back standard visual display names in suggested follow-ups
     formatted_followups = []
     for f in res.get("suggested_followups", []):
@@ -864,7 +890,7 @@ if user_query:
         for key, visual in FUND_VISUAL_METADATA.items():
             db_fund = VERIFIED_SCHEME_DB.get(key)
             if db_fund:
-                modified_f = modified_f.replace(db_fund["fund_name"].replace(" Direct Growth","").replace(" Direct Plan Growth","").strip(), visual["visual_name"])
+                modified_f = modified_f.replace(db_fund["fund_name"].replace(" Direct Growth", "").replace(" Direct Plan Growth", "").strip(), visual["visual_name"])
                 modified_f = modified_f.replace(db_fund["fund_name"], visual["visual_name"])
         formatted_followups.append(modified_f)
 

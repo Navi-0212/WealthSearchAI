@@ -11,4 +11,5 @@ requests
 sentence-transformers
 groq
 streamlit
+plotly
 pysqlite3-binary; sys_platform == 'linux'
