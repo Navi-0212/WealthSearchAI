@@ -1,0 +1,57 @@
+name: Automated Ingestion Scheduler
+
+on:
+  schedule:
+    # 09:15 AM IST is 03:45 AM UTC
+    - cron: '45 3 * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  run-ingestion:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Install Playwright Chromium
+      run: |
+        python -m playwright install --with-deps chromium
+
+    - name: Run Ingestion & Re-indexing
+      env:
+        # Pass Gemini API key if configured in repository secrets (optional fallback to SentenceTransformers)
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PYTHONPATH: .
+      run: |
+        python backend/scheduler.py --immediate
+
+    - name: Commit and Push Updated Database
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # Add files that might have been updated
+        git add data/scraped_schemes.json data/bm25_store.pkl db/
+        
+        # Only commit and push if there are actual changes
+        if ! git diff --cached --quiet; then
+          git commit -m "Automated daily ingestion: updated mutual fund data and search indices [skip ci]"
+          git push origin main
+        else
+          echo "No changes in mutual fund data or search indices detected. Skipping commit."
+        fi
