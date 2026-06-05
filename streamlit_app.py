@@ -1271,6 +1271,10 @@ with col_main:
                     "how r you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
                     "how are you doing": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
                     "how's it going": "It's going well, thank you! How are you? I'm here to assist with any mutual fund information you need.",
+                    "how can you help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
+                    "how can u help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
+                    "what can you do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
+                    "what can u do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
                     "good morning": "Good morning! I'm doing well, thank you. How can I help you with your mutual fund queries today?",
                     "good afternoon": "Good afternoon! I'm doing well, thank you. How can I assist you with mutual fund information?",
                     "good evening": "Good evening! I'm doing well, thank you. What would you like to know about mutual funds?",
@@ -1285,14 +1289,12 @@ with col_main:
                 greeting_matched = False
                 greeting_response = ""
                 
-                # Only match if the input is very short or is a pure greeting
-                # Avoid matching questions that contain greeting words
-                if len(prompt_lower.split()) <= 3:  # Only very short inputs
-                    for greeting, response in greeting_responses.items():
-                        if greeting in prompt_lower or prompt_lower in greeting:
-                            greeting_matched = True
-                            greeting_response = response
-                            break
+                # Check for conversational/greeting patterns
+                for greeting, response in greeting_responses.items():
+                    if greeting in prompt_lower or prompt_lower in greeting:
+                        greeting_matched = True
+                        greeting_response = response
+                        break
                 
                 if greeting_matched:
                     response_placeholder.markdown(greeting_response)
@@ -1320,8 +1322,28 @@ with col_main:
                             main_response = re.sub(question_pattern, '', main_response).strip()
                             follow_up_questions = questions[:3]  # Take first 3 questions
                         
-                        response_placeholder.markdown(main_response)
-                        st.session_state.messages.append({"role": "assistant", "content": main_response})
+                        # Check if response is irrelevant (returns random fund data for conversational queries)
+                        # If response contains fund manager bio or fund details for a conversational query, provide fallback
+                        irrelevant_indicators = [
+                            "[Fund Manager Bio]",
+                            "Fund Management details",
+                            "Tenure Start:",
+                            "Educational Background:"
+                        ]
+                        
+                        # Check if query is conversational but response contains fund-specific data
+                        prompt_lower = prompt.lower().strip()
+                        is_conversational = any(word in prompt_lower for word in ["help", "what can", "how can", "who are you", "your name", "introduce"])
+                        has_fund_data = any(indicator in main_response for indicator in irrelevant_indicators)
+                        
+                        if is_conversational and has_fund_data:
+                            # Provide standard professional response for irrelevant queries
+                            fallback_response = "I'm a specialized mutual fund assistant designed to help you with information about specific mutual funds in my database. I can provide details on NAV, expense ratios, fund managers, holdings, exit loads, and performance data. Please ask specific questions about the funds you're interested in, and I'll do my best to provide accurate, grounded information."
+                            response_placeholder.markdown(fallback_response)
+                            st.session_state.messages.append({"role": "assistant", "content": fallback_response})
+                        else:
+                            response_placeholder.markdown(main_response)
+                            st.session_state.messages.append({"role": "assistant", "content": main_response})
                         
                         # Display follow-up questions as clickable buttons
                         if follow_up_questions:
