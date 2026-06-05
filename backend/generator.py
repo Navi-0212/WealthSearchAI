@@ -80,7 +80,9 @@ class RAGResponseGenerator:
         # Prohibited generic advisory keywords
         prohibited_rules = [
             (r"\b(should i invest|is it good to buy|best fund to invest|will it double|guarantee|prediction|predict)\b", 
-             "I'm sorry, but as a compliance-first assistant, I am not permitted to provide investment advice, speculative performance projections, or subjective buying/selling recommendations. I can, however, provide objective facts, expense ratios, holdings, exit loads, manager histories, and ratings for our scoped schemes.")
+             "I'm sorry, but as a compliance-first assistant, I am not permitted to provide investment advice, speculative performance projections, or subjective buying/selling recommendations. I can, however, provide objective facts, expense ratios, holdings, exit loads, manager histories, and ratings for our scoped schemes."),
+            (r"\b(which mutual fund should i invest|which is the best mutual fund|best mutual fund for|which fund should i buy|recommend a fund|suggest a fund|top mutual fund)\b",
+             "I'm sorry, but I cannot answer investment advice questions like which fund you should invest in or which is the best fund. Due to SEBI compliance guidelines, I'm not permitted to provide subjective recommendations or buying/selling advice. However, I can help you evaluate funds by providing objective information such as historical performance, fund manager's investment philosophy and thought process, expense ratios, holdings, and other factual data. I suggest you review these factors and consult a SEBI-registered investment advisor for personalized recommendations.")
         ]
         
         for pattern, rejection_msg in prohibited_rules:
