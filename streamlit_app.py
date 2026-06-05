@@ -1132,6 +1132,104 @@ with col_main:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
+        # Proactive suggestions based on selected fund
+        if not st.session_state.messages:
+            fund = VERIFIED_SCHEME_DB.get(selected_fund_key)
+            if fund:
+                fund_name = fund["fund_name"]
+                st.markdown("### 💡 Suggested Questions:")
+                suggestions = [
+                    f"What is the current NAV of {fund_name}?",
+                    f"Who is the fund manager of {fund_name}?",
+                    f"What are the top holdings of {fund_name}?",
+                    f"What is the expense ratio of {fund_name}?",
+                    f"What is the exit load for {fund_name}?"
+                ]
+                for suggestion in suggestions:
+                    if st.button(suggestion, key=f"suggestion_{suggestion[:20]}"):
+                        st.session_state.messages.append({"role": "user", "content": suggestion})
+                        with st.chat_message("user"):
+                            st.markdown(suggestion)
+                        
+                        # Generate response
+                        with st.chat_message("assistant"):
+                            response_placeholder = st.empty()
+                            
+                            # Check compliance
+                            is_compliant, rejection_msg = generator.is_query_compliant(suggestion)
+                            if not is_compliant:
+                                response_placeholder.markdown(rejection_msg)
+                                st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                            else:
+                                # Generate RAG response
+                                response = generator.generate_response(suggestion)
+                                
+                                # Parse and display follow-up questions
+                                main_response = response
+                                follow_up_questions = []
+                                
+                                # Extract follow-up questions in <<Question>> format
+                                import re
+                                question_pattern = r'<<([^>]+)>>'
+                                questions = re.findall(question_pattern, response)
+                                if questions:
+                                    main_response = re.sub(question_pattern, '', response).strip()
+                                    follow_up_questions = questions[:3]  # Take first 3 questions
+                                
+                                response_placeholder.markdown(main_response)
+                                st.session_state.messages.append({"role": "assistant", "content": main_response})
+                                
+                                # Display follow-up questions as clickable buttons
+                                if follow_up_questions:
+                                    st.markdown("### 🤔 Follow-up Questions:")
+                                    for i, q in enumerate(follow_up_questions):
+                                        if st.button(q, key=f"followup_{i}_{len(st.session_state.messages)}"):
+                                            st.session_state.messages.append({"role": "user", "content": q})
+                                            with st.chat_message("user"):
+                                                st.markdown(q)
+                                            
+                                            # Generate response for follow-up
+                                            with st.chat_message("assistant"):
+                                                followup_placeholder = st.empty()
+                                                is_compliant, rejection_msg = generator.is_query_compliant(q)
+                                                if not is_compliant:
+                                                    followup_placeholder.markdown(rejection_msg)
+                                                    st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                                else:
+                                                    followup_response = generator.generate_response(q)
+                                                    
+                                                    # Parse follow-up questions from follow-up response
+                                                    followup_main = followup_response
+                                                    followup_questions = []
+                                                    followup_qs = re.findall(question_pattern, followup_response)
+                                                    if followup_qs:
+                                                        followup_main = re.sub(question_pattern, '', followup_response).strip()
+                                                        followup_questions = followup_qs[:3]
+                                                    
+                                                    followup_placeholder.markdown(followup_main)
+                                                    st.session_state.messages.append({"role": "assistant", "content": followup_main})
+                                                    
+                                                    if followup_questions:
+                                                        st.markdown("### 🤔 Follow-up Questions:")
+                                                        for j, fq in enumerate(followup_questions):
+                                                            if st.button(fq, key=f"followup_{j}_{len(st.session_state.messages)}"):
+                                                                st.session_state.messages.append({"role": "user", "content": fq})
+                                                                with st.chat_message("user"):
+                                                                    st.markdown(fq)
+                                                                
+                                                                with st.chat_message("assistant"):
+                                                                    fq_placeholder = st.empty()
+                                                                    is_compliant, rejection_msg = generator.is_query_compliant(fq)
+                                                                    if not is_compliant:
+                                                                        fq_placeholder.markdown(rejection_msg)
+                                                                        st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                                                    else:
+                                                                        fq_response = generator.generate_response(fq)
+                                                                        fq_main = re.sub(question_pattern, '', fq_response).strip()
+                                                                        fq_placeholder.markdown(fq_main)
+                                                                        st.session_state.messages.append({"role": "assistant", "content": fq_main})
+                                                st.rerun()
+
         # Chat input
         if prompt := st.chat_input("Ask about mutual funds..."):
             st.session_state.messages.append({"role": "user", "content": prompt})
@@ -1150,124 +1248,69 @@ with col_main:
                 else:
                     # Generate RAG response
                     response = generator.generate_response(prompt)
-                    response_placeholder.markdown(response)
-                    st.session_state.messages.append({"role": "assistant", "content": response})
-
-    # --- CHAT & RAG PROCESSOR ENGINE ---
-    # Instantiate response generator
-    @st.cache_resource
-    def get_generator():
-        return RAGResponseGenerator()
-
-    generator = get_generator()
-
-    # Initialize chat history with design mockup parameters
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {
-                "role": "assistant",
-                "content": "Welcome to **WealthSearchAI**. How can I help with your mutual fund queries today?\n\nI have real-time access to SEBI-grounded data and Groww product metrics.",
-                "citations": [],
-                "chart_data": [],
-                "suggested_followups": [
-                    f"Compare exit load of {FUND_VISUAL_METADATA['nippon-india-small-cap-fund-direct-growth']['visual_name']} and {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}",
-                    f"Who manages {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}?",
-                    f"Show expense ratio of {FUND_VISUAL_METADATA['edelweiss-mid-and-small-cap-fund-direct-growth']['visual_name']}"
-                ]
-            }
-        ]
-
-    # Display past messages
-    for msg in st.session_state.messages:
-        avatar_url = ASSISTANT_AVATAR if msg["role"] == "assistant" else USER_AVATAR
-
-        with st.chat_message(msg["role"], avatar=avatar_url):
-            st.markdown(msg["content"])
-
-            # Render citations
-            if msg.get("citations"):
-                st.markdown("**Sources & Factsheets:**")
-                cols = st.columns(len(msg["citations"]))
-                for idx, cite in enumerate(msg["citations"]):
-                    cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
-
-    # Click-to-ask follow-up questions
-    if st.session_state.messages and st.session_state.messages[-1]["role"] == "assistant":
-        last_msg = st.session_state.messages[-1]
-        if last_msg.get("suggested_followups"):
-            st.markdown("<div style='margin-top: 12px; margin-bottom: 4px; font-size: 0.85rem; font-weight: 700; color: #8a919f;'>SUGGESTED QUESTIONS:</div>", unsafe_allow_html=True)
-            cols = st.columns(len(last_msg["suggested_followups"]))
-            for idx, q_text in enumerate(last_msg["suggested_followups"]):
-                btn_label = q_text
-                if len(btn_label) > 42:
-                    btn_label = btn_label[:40] + "..."
-                if cols[idx].button(btn_label, key=f"btn_{idx}_{len(st.session_state.messages)}", use_container_width=True):
-                    st.session_state.current_question = q_text
-                    st.rerun()
-
-    # Capture query input
-    if "current_question" not in st.session_state:
-        st.session_state.current_question = ""
-
-    user_query = st.chat_input("Ask about fund performance, exit loads, or expense ratios...")
-
-    # Override query if button was clicked
-    if st.session_state.current_question:
-        user_query = st.session_state.current_question
-        st.session_state.current_question = ""  # Reset
-
-    # Ingestion trigger
-    if user_query:
-        # Display user input bubble
-        with st.chat_message("user", avatar=USER_AVATAR):
-            st.markdown(user_query)
-
-        st.session_state.messages.append({"role": "user", "content": user_query})
-
-        # Process RAG generation
-        with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-            with st.spinner("Retrieving compliance context and synthesizing answer..."):
-                res = generator.generate_response(user_query)
-
-                # Print response
-                st.markdown(res["answer"])
-
-                # Print citations
-                if res.get("citations"):
-                    st.markdown("**Sources & Factsheets:**")
-                    cols = st.columns(len(res["citations"]))
-                    for idx, cite in enumerate(res["citations"]):
-                        cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
-
-        # Map back standard visual display names in suggested follow-ups
-        formatted_followups = []
-        for f in res.get("suggested_followups", []):
-            modified_f = f
-            for key, visual in FUND_VISUAL_METADATA.items():
-                db_fund = VERIFIED_SCHEME_DB.get(key)
-                if db_fund:
-                    modified_f = modified_f.replace(db_fund["fund_name"].replace(" Direct Growth", "").replace(" Direct Plan Growth", "").strip(), visual["visual_name"])
-                    modified_f = modified_f.replace(db_fund["fund_name"], visual["visual_name"])
-            formatted_followups.append(modified_f)
-
-        # Store assistant response to session state
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": res["answer"],
-            "citations": res.get("citations", []),
-            "chart_data": res.get("comparison_funds", []),
-            "suggested_followups": formatted_followups
-        })
-        st.rerun()
-
-# Footer SEBI Advisory Note
-st.markdown("""
-<div style="text-align: center; color: rgba(138, 145, 159, 0.6); font-size: 0.75rem; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="stroke-linecap: round; stroke-linejoin: round;">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="16" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-    </svg>
-    All information is scraped daily from verified Groww product details. Mutual fund investments are subject to market risks.
-</div>
-""", unsafe_allow_html=True)
+                    
+                    # Parse and display follow-up questions
+                    main_response = response
+                    follow_up_questions = []
+                    
+                    # Extract follow-up questions in <<Question>> format
+                    import re
+                    question_pattern = r'<<([^>]+)>>'
+                    questions = re.findall(question_pattern, response)
+                    if questions:
+                        main_response = re.sub(question_pattern, '', response).strip()
+                        follow_up_questions = questions[:3]  # Take first 3 questions
+                    
+                    response_placeholder.markdown(main_response)
+                    st.session_state.messages.append({"role": "assistant", "content": main_response})
+                    
+                    # Display follow-up questions as clickable buttons
+                    if follow_up_questions:
+                        st.markdown("### 🤔 Follow-up Questions:")
+                        for i, q in enumerate(follow_up_questions):
+                            if st.button(q, key=f"followup_{i}_{len(st.session_state.messages)}"):
+                                st.session_state.messages.append({"role": "user", "content": q})
+                                with st.chat_message("user"):
+                                    st.markdown(q)
+                                
+                                # Generate response for follow-up
+                                with st.chat_message("assistant"):
+                                    followup_placeholder = st.empty()
+                                    is_compliant, rejection_msg = generator.is_query_compliant(q)
+                                    if not is_compliant:
+                                        followup_placeholder.markdown(rejection_msg)
+                                        st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                    else:
+                                        followup_response = generator.generate_response(q)
+                                        
+                                        # Parse follow-up questions from follow-up response
+                                        followup_main = followup_response
+                                        followup_questions = []
+                                        followup_qs = re.findall(question_pattern, followup_response)
+                                        if followup_qs:
+                                            followup_main = re.sub(question_pattern, '', followup_response).strip()
+                                            followup_questions = followup_qs[:3]
+                                        
+                                        followup_placeholder.markdown(followup_main)
+                                        st.session_state.messages.append({"role": "assistant", "content": followup_main})
+                                        
+                                        if followup_questions:
+                                            st.markdown("### 🤔 Follow-up Questions:")
+                                            for j, fq in enumerate(followup_questions):
+                                                if st.button(fq, key=f"followup_{j}_{len(st.session_state.messages)}"):
+                                                    st.session_state.messages.append({"role": "user", "content": fq})
+                                                    with st.chat_message("user"):
+                                                        st.markdown(fq)
+                                                    
+                                                    with st.chat_message("assistant"):
+                                                        fq_placeholder = st.empty()
+                                                        is_compliant, rejection_msg = generator.is_query_compliant(fq)
+                                                        if not is_compliant:
+                                                            fq_placeholder.markdown(rejection_msg)
+                                                            st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                                        else:
+                                                            fq_response = generator.generate_response(fq)
+                                                            fq_main = re.sub(question_pattern, '', fq_response).strip()
+                                                            fq_placeholder.markdown(fq_main)
+                                                            st.session_state.messages.append({"role": "assistant", "content": fq_main})
+                                    st.rerun()
