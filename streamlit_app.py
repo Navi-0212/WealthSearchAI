@@ -1261,6 +1261,123 @@ with col_main:
             with st.chat_message("assistant"):
                 response_placeholder = st.empty()
                 
+                # Check for fund family disambiguation
+                prompt_lower = prompt.lower().strip()
+                
+                # Fund family mappings
+                fund_families = {
+                    "nippon": ["Nippon India Small Cap Fund Direct Growth", "Nippon India Multi Asset Allocation Fund Direct Growth"],
+                    "bandhan": ["Bandhan Small Cap Fund Direct Growth", "Bandhan Midcap Fund Direct Growth", "Bandhan Multi Cap Fund Direct Growth"],
+                    "parag parikh": ["Parag Parikh Flexi Cap Fund Direct Growth"],
+                    "ppfas": ["Parag Parikh Flexi Cap Fund Direct Growth"],
+                    "edelweiss": ["Edelweiss Midcap Fund Direct Growth"],
+                    "zerodha": ["Zerodha Multi Asset Passive FoF Direct Growth"],
+                }
+                
+                # Check if query contains a fund family name but is ambiguous
+                matched_family = None
+                for family, funds in fund_families.items():
+                    if family in prompt_lower and len(funds) > 1:
+                        # Check if the query doesn't already specify the exact fund name
+                        has_specific_fund = any(fund.lower() in prompt_lower for fund in funds)
+                        if not has_specific_fund:
+                            matched_family = family
+                            break
+                
+                if matched_family:
+                    # Show disambiguation UI
+                    funds = fund_families[matched_family]
+                    response_placeholder.markdown(f"I found multiple funds under **{matched_family.title()}**. Please select the specific fund you're interested in:")
+                    
+                    for fund in funds:
+                        if st.button(fund, key=f"disambig_{fund}"):
+                            # Replace the family name with the specific fund name in the query
+                            refined_query = prompt_lower.replace(matched_family, fund)
+                            st.session_state.messages.append({"role": "assistant", "content": f"You selected: {fund}"})
+                            st.session_state.messages.append({"role": "user", "content": refined_query})
+                            with st.chat_message("user"):
+                                st.markdown(refined_query)
+                            
+                            # Process the refined query
+                            with st.chat_message("assistant"):
+                                refined_placeholder = st.empty()
+                                is_compliant, rejection_msg = generator.is_query_compliant(refined_query)
+                                if not is_compliant:
+                                    refined_placeholder.markdown(rejection_msg)
+                                    st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                else:
+                                    # Generate RAG response
+                                    response = generator.generate_response(refined_query)
+                                    
+                                    # Parse and display follow-up questions
+                                    main_response = response["answer"] if isinstance(response, dict) else response
+                                    follow_up_questions = []
+                                    
+                                    # Extract follow-up questions in <<Question>> format
+                                    import re
+                                    question_pattern = r'<<([^>]+)>>'
+                                    questions = re.findall(question_pattern, main_response)
+                                    if questions:
+                                        main_response = re.sub(question_pattern, '', main_response).strip()
+                                        follow_up_questions = questions[:3]
+                                    
+                                    refined_placeholder.markdown(main_response)
+                                    st.session_state.messages.append({"role": "assistant", "content": main_response})
+                                    
+                                    # Display follow-up questions as clickable buttons
+                                    if follow_up_questions:
+                                        st.markdown("### 🤔 Follow-up Questions:")
+                                        for i, q in enumerate(follow_up_questions):
+                                            if st.button(q, key=f"followup_{i}_{len(st.session_state.messages)}"):
+                                                st.session_state.messages.append({"role": "user", "content": q})
+                                                with st.chat_message("user"):
+                                                    st.markdown(q)
+                                                
+                                                # Generate response for follow-up
+                                                with st.chat_message("assistant"):
+                                                    followup_placeholder = st.empty()
+                                                    is_compliant, rejection_msg = generator.is_query_compliant(q)
+                                                    if not is_compliant:
+                                                        followup_placeholder.markdown(rejection_msg)
+                                                        st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                                    else:
+                                                        followup_response = generator.generate_response(q)
+                                                        
+                                                        # Parse follow-up questions from follow-up response
+                                                        followup_main = followup_response["answer"] if isinstance(followup_response, dict) else followup_response
+                                                        followup_questions = []
+                                                        followup_qs = re.findall(question_pattern, followup_main)
+                                                        if followup_qs:
+                                                            followup_main = re.sub(question_pattern, '', followup_main).strip()
+                                                            followup_questions = followup_qs[:3]
+                                                        
+                                                        followup_placeholder.markdown(followup_main)
+                                                        st.session_state.messages.append({"role": "assistant", "content": followup_main})
+                                                        
+                                                        if followup_questions:
+                                                            st.markdown("### 🤔 Follow-up Questions:")
+                                                            for j, fq in enumerate(followup_questions):
+                                                                if st.button(fq, key=f"followup_{j}_{len(st.session_state.messages)}"):
+                                                                    st.session_state.messages.append({"role": "user", "content": fq})
+                                                                    with st.chat_message("user"):
+                                                                        st.markdown(fq)
+                                                                    
+                                                                    with st.chat_message("assistant"):
+                                                                        fq_placeholder = st.empty()
+                                                                        is_compliant, rejection_msg = generator.is_query_compliant(fq)
+                                                                        if not is_compliant:
+                                                                            fq_placeholder.markdown(rejection_msg)
+                                                                            st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                                                                        else:
+                                                                            fq_response = generator.generate_response(fq)
+                                                                            fq_main = fq_response["answer"] if isinstance(fq_response, dict) else fq_response
+                                                                            fq_main = re.sub(question_pattern, '', fq_main).strip()
+                                                                            fq_placeholder.markdown(fq_main)
+                                                                            st.session_state.messages.append({"role": "assistant", "content": fq_main})
+                                                                    st.rerun()
+                            st.rerun()
+                    st.stop()
+                
                 # Check compliance first (before greeting detection to catch investment advice)
                 is_compliant, rejection_msg = generator.is_query_compliant(prompt)
                 if not is_compliant:
