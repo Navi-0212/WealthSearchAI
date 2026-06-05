@@ -94,18 +94,6 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         background-color: #10131a !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-        padding: 0px !important;
-    }
-    
-    section[data-testid="stSidebar"] div[data-testid="stVerticalBlock"] {
-        padding: 0px !important;
-        gap: 0px !important;
-    }
-    
-    /* Ensure sidebar is always visible */
-    section[data-testid="stSidebar"][aria-expanded="false"] {
-        display: block !important;
-        width: auto !important;
     }
     
     /* Custom Sidebar Card Styling */
