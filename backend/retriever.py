@@ -216,6 +216,36 @@ class HybridRetriever:
         chunks = [c["doc"] for c in fused_candidates]
         texts = [chunk["text"] for chunk in chunks]
         
+        # Query type detection for chunk prioritization
+        q_lower = query.lower()
+        priority_categories = []
+        
+        if "nav" in q_lower or "net asset value" in q_lower:
+            priority_categories = ["NAV"]
+        elif "performance" in q_lower or "return" in q_lower or "growth" in q_lower:
+            priority_categories = ["Performance Timeline"]
+        elif "manager" in q_lower or "who manages" in q_lower:
+            priority_categories = ["Fund Manager", "Work History"]
+        elif "holdings" in q_lower or "stocks" in q_lower or "portfolio" in q_lower:
+            priority_categories = ["Holdings"]
+        elif "rating" in q_lower or "stars" in q_lower:
+            priority_categories = ["Public Rating"]
+        elif "exit load" in q_lower or "redeem" in q_lower:
+            priority_categories = ["NAV"]  # Exit load is in NAV chunk
+        
+        # Prioritize chunks based on query type
+        if priority_categories:
+            priority_chunks = []
+            other_chunks = []
+            for chunk in chunks:
+                if chunk["metadata"].get("metric_category") in priority_categories:
+                    priority_chunks.append(chunk)
+                else:
+                    other_chunks.append(chunk)
+            # Reorder: priority chunks first, then others
+            chunks = priority_chunks + other_chunks
+            texts = [chunk["text"] for chunk in chunks]
+        
         if self.reranker_model:
             try:
                 logger.info(f"Re-ranking {len(texts)} candidate chunks using CrossEncoder model...")
