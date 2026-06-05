@@ -475,11 +475,12 @@ st.markdown("""
         transform: translateY(-1px) !important;
     }
     
-    section[data-testid="stSidebar"] button[kind="primary"] {
-        background: linear-gradient(90deg, #00daf3, #00f2ff) !important;
+    section[data-testid="stSidebar"] button[kind="primary"],
+    div[data-testid="stVerticalBlock"] button[kind="primary"] {
+        background: #0088ff !important;
         border: none !important;
         border-radius: 12px !important;
-        color: #0a0e15 !important;
+        color: #ffffff !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         font-size: 0.78rem !important;
         font-weight: 700 !important;
@@ -491,6 +492,17 @@ st.markdown("""
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
+    }
+    
+    section[data-testid="stSidebar"] button[kind="primary"]:hover,
+    div[data-testid="stVerticalBlock"] button[kind="primary"]:hover {
+        background: #0077e6 !important;
+    }
+    
+    /* Force override any Streamlit default orange colors */
+    section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"],
+    div[data-testid="stVerticalBlock"] button[data-testid="stBaseButton-primary"] {
+        background-color: #0088ff !important;
     }
     
     /* Fund Summary Page Styling */
