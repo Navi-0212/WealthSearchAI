@@ -78,20 +78,6 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         background-color: #10131a !important;
         border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-        display: block !important;
-        width: 320px !important;
-        min-width: 320px !important;
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        height: 100vh !important;
-        z-index: 999 !important;
-    }
-    
-    /* Force sidebar content to be visible */
-    section[data-testid="stSidebar"] > div {
-        display: block !important;
-        width: 100% !important;
     }
     
     /* Custom Sidebar Card Styling */
@@ -1102,10 +1088,6 @@ def render_fund_summary(fund_key: str):
 
 
 # --- MAIN CONTENT PANEL ---
-# Sidebar toggle button
-if st.button("📊 Show/Hide Sidebar", key="main_sidebar_toggle"):
-    pass
-
 # Top Navigation bar
 st.markdown("""
 <div class="top-nav-bar">
