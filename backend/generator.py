@@ -103,7 +103,30 @@ class RAGResponseGenerator:
             
         q_lower = query.lower()
         
-        # 1. Ask about fund managers
+        # 1. Ask about NAV
+        if "nav" in q_lower or "net asset value" in q_lower:
+            nav_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] == "NAV"]
+            if nav_chunks:
+                first = nav_chunks[0]
+                text = first["text"]
+                # Try to extract NAV value from the text
+                match = re.search(r'Current NAV[:\s]*([0-9.]+)', text, re.IGNORECASE)
+                if match:
+                    nav_val = match.group(1)
+                    ans = (
+                        f"The current NAV of **{first['metadata']['fund_name']}** is ₹{nav_val}\n\n"
+                        f"`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
+                    )
+                    return ans
+                else:
+                    ans = (
+                        f"The NAV details for **{first['metadata']['fund_name']}** are as follows:\n\n"
+                        f"{text}\n\n"
+                        f"`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
+                    )
+                    return ans
+        
+        # 2. Ask about fund managers
         if "manager" in q_lower or "who manages" in q_lower or "background" in q_lower or "experience" in q_lower:
             manager_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] in ["Fund Manager", "Work History"]]
             if manager_chunks:
@@ -116,7 +139,7 @@ class RAGResponseGenerator:
                 ans += f"\n`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
                 return ans.strip()
                 
-        # 2. Ask about exit load
+        # 3. Ask about exit load
         if "exit load" in q_lower or "redeem" in q_lower or "penalty" in q_lower or "charges" in q_lower:
             load_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] == "NAV"]
             if load_chunks:
@@ -139,14 +162,14 @@ class RAGResponseGenerator:
                     )
                     return ans
  
-        # 3. Ask about holdings
+        # 4. Ask about holdings
         if "holdings" in q_lower or "stocks" in q_lower or "portfolio" in q_lower or "owns" in q_lower:
             holdings_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] == "Holdings"]
             if holdings_chunks:
                 first = holdings_chunks[0]
                 return f"Latest holdings for **{first['metadata']['fund_name']}**:\n\n{first['text']}\n\n`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
  
-        # 4. Ask about rating
+        # 5. Ask about rating
         if "rating" in q_lower or "stars" in q_lower or "score" in q_lower or "reviews" in q_lower:
             rating_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] == "Public Rating"]
             if rating_chunks:
@@ -155,7 +178,7 @@ class RAGResponseGenerator:
                 ans = f"Official rating details: {rating_detail}\n\n`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
                 return ans
  
-        # 5. Ask about performance timeline or return
+        # 6. Ask about performance timeline or return
         if "performance" in q_lower or "return" in q_lower or "growth" in q_lower or "year" in q_lower or "comparison" in q_lower or "compare" in q_lower:
             perf_chunks = [c for c in context_chunks if c["metadata"]["metric_category"] == "Performance Timeline"]
             if perf_chunks:
@@ -167,7 +190,7 @@ class RAGResponseGenerator:
                 ans += f"`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
                 return ans.strip()
  
-        # 6. Standard context synthesis fallback
+        # 7. Standard context synthesis fallback
         first = context_chunks[0]
         ans = f"{first['text']}\n\n`[{first['metadata']['fund_name']}, {first['metadata']['source_url']}]`"
         return ans
