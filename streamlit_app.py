@@ -1367,15 +1367,21 @@ with col_main:
                 # Check for fund family disambiguation
                 prompt_lower = prompt.lower().strip()
                 
-                # Fund family mappings
-                fund_families = {
-                    "nippon": ["Nippon India Small Cap Fund Direct Growth", "Nippon India Multi Asset Allocation Fund Direct Growth"],
-                    "bandhan": ["Bandhan Small Cap Fund Direct Growth", "Bandhan Midcap Fund Direct Growth", "Bandhan Multi Cap Fund Direct Growth"],
-                    "parag parikh": ["Parag Parikh Flexi Cap Fund Direct Growth"],
-                    "ppfas": ["Parag Parikh Flexi Cap Fund Direct Growth"],
-                    "edelweiss": ["Edelweiss Midcap Fund Direct Growth"],
-                    "zerodha": ["Zerodha Multi Asset Passive FoF Direct Growth"],
-                }
+                # Build fund families dynamically from VERIFIED_SCHEME_DB
+                fund_families = {}
+                for fund_key, fund_data in VERIFIED_SCHEME_DB.items():
+                    fund_name = fund_data["fund_name"]
+                    # Extract fund family name (first word or common prefix)
+                    words = fund_name.lower().split()
+                    if len(words) >= 2:
+                        # Use first two words as family name (e.g., "nippon india", "bandhan small")
+                        family = " ".join(words[:2])
+                    else:
+                        family = words[0]
+                    
+                    if family not in fund_families:
+                        fund_families[family] = []
+                    fund_families[family].append(fund_name)
                 
                 # Check if query contains a fund family name but is ambiguous
                 matched_family = None
