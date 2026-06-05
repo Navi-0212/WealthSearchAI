@@ -11,12 +11,14 @@ import os
 import re
 import json
 import logging
+import textwrap
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from backend.generator import RAGResponseGenerator
 from backend.scraper import VERIFIED_SCHEME_DB
+import streamlit.components.v1 as components
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -452,6 +454,262 @@ st.markdown("""
         background: rgba(0, 218, 243, 0.15);
         border-color: #00daf3;
     }
+
+    /* Sidebar fund button styling (Streamlit native buttons override) */
+    section[data-testid="stSidebar"] button[kind="secondary"] {
+        background: rgba(255, 255, 255, 0.025) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px !important;
+        color: #e0e2ec !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        text-align: left !important;
+        padding: 10px 14px !important;
+        min-height: 0 !important;
+        line-height: 1.35 !important;
+        transition: all 0.25s ease !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    section[data-testid="stSidebar"] button[kind="secondary"]:hover {
+        background: rgba(255, 255, 255, 0.055) !important;
+        border-color: rgba(0, 218, 243, 0.5) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    section[data-testid="stSidebar"] button[kind="primary"] {
+        background: linear-gradient(90deg, #00daf3, #00f2ff) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        color: #0a0e15 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        text-align: left !important;
+        padding: 10px 14px !important;
+        min-height: 0 !important;
+        line-height: 1.35 !important;
+        width: 100% !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    
+    /* Fund Summary Page Styling */
+    
+    /* Enhanced Search Bar - 1.5x size */
+    section[data-testid="stSidebar"] input[type="text"] {
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        color: #e0e2ec !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 1.05rem !important;
+        font-weight: 500 !important;
+        padding: 14px 18px !important;
+        height: 54px !important;
+        line-height: 1.4 !important;
+        transition: all 0.25s ease !important;
+    }
+    section[data-testid="stSidebar"] input[type="text"]:focus {
+        border-color: #00daf3 !important;
+        box-shadow: 0 0 0 2px rgba(0, 218, 243, 0.15) !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+    }
+    section[data-testid="stSidebar"] input[type="text"]::placeholder {
+        color: #6b7280 !important;
+        font-size: 1.0rem !important;
+    }
+    /* Search bar container spacing — increased gap to fund list */
+    section[data-testid="stSidebar"] div[data-testid="stTextInput"] {
+        padding: 8px 14px 0 14px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .fund-summary-container {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 20px;
+    }
+    
+    .fund-summary-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .fund-summary-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(0, 218, 243, 0.08);
+        border: 1px solid rgba(0, 218, 243, 0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .fund-summary-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #e0e2ec;
+    }
+    
+    .fund-summary-subtitle {
+        color: #8a919f;
+        font-size: 0.78rem;
+        margin-top: 2px;
+    }
+    
+    .fund-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+    
+    .fund-stat-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 14px 16px;
+    }
+    
+    .fund-stat-label {
+        color: #8a919f;
+        font-size: 0.68rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+    }
+    
+    .fund-stat-value {
+        color: #e0e2ec;
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+    }
+    
+    .fund-stat-value.highlight {
+        color: #00daf3;
+    }
+    
+    .fund-section-title {
+        color: #e0e2ec;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        margin-top: 8px;
+    }
+    
+    .fund-holdings-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .fund-holdings-table th {
+        color: #8a919f;
+        font-size: 0.70rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .fund-holdings-table td {
+        color: #e0e2ec;
+        font-size: 0.82rem;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .fund-holdings-table tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .fund-manager-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .fund-manager-name {
+        color: #e0e2ec;
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .fund-manager-meta {
+        color: #8a919f;
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+    
+    .perf-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .perf-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    .perf-period {
+        color: #8a919f;
+        font-size: 0.70rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .perf-return {
+        color: #00daf3;
+        font-size: 1.15rem;
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+    }
+    
+    .perf-return.inactive {
+        color: #8a919f;
+        font-size: 0.82rem;
+    }
+    
+    .view-toggle-container {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    /* Hide Streamlit default UI chrome */
+    header[data-testid="stHeader"] { display: none !important; }
+    section[data-testid="stSidebar"] > div:first-child > button { display: none !important; }
+    .stDeployButton, [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
+    .block-container { padding-top: 1rem !important; }
+    section[data-testid="stSidebar"] { background-color: #10131a !important; }
+    section[data-testid="stSidebar"] > div { padding: 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -624,331 +882,216 @@ def render_nav_chart(mapped_keys: list):
 
 
 # --- SIDEBAR GENERATION ---
-# Get active fund selection from URL query parameters (defaults to nippon small cap)
-query_params = st.query_params
-selected_fund_key = query_params.get("fund", "nippon-india-small-cap-fund-direct-growth")
+# Initialize selected fund in session state
+if "selected_fund_key" not in st.session_state:
+    query_params = st.query_params
+    _init_fund = query_params.get("fund", "nippon-india-small-cap-fund-direct-growth")
+    if _init_fund not in FUND_VISUAL_METADATA:
+        _init_fund = "nippon-india-small-cap-fund-direct-growth"
+    st.session_state.selected_fund_key = _init_fund
 
-if selected_fund_key not in FUND_VISUAL_METADATA:
-    selected_fund_key = "nippon-india-small-cap-fund-direct-growth"
+if "view_mode" not in st.session_state:
+    st.session_state.view_mode = "chat"  # "chat" or "summary"
 
-# Compile Sidebar HTML — CSS is embedded directly so it works in Streamlit's sidebar scope
-sidebar_html = """
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+selected_fund_key = st.session_state.selected_fund_key
 
-.sidebar-container {
-    padding: 24px 16px;
-    background-color: #10131a;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    box-sizing: border-box;
-}
 
-.brand-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 28px;
-    gap: 12px;
-}
+def _select_fund(fund_key):
+    """Callback to select a fund and switch to summary view."""
+    st.session_state.selected_fund_key = fund_key
+    st.session_state.view_mode = "summary"
 
-.brand-icon-square {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    background-color: #a8c8ff;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.brand-svg-icon {
-    width: 24px;
-    height: 24px;
-    fill: #003061;
-}
-
-.brand-name {
-    color: #e0e2ec;
-    font-size: 1.2rem;
-    font-weight: 700;
-    line-height: 1.1;
-    font-family: 'Outfit', sans-serif;
-}
-
-.brand-subtitle {
-    color: #8a919f;
-    font-size: 0.70rem;
-    font-weight: 400;
-    margin-top: 2px;
-}
-
-.funds-list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-
-.fund-card {
-    display: flex;
-    align-items: center;
-    padding: 11px 14px;
-    border-radius: 12px;
-    text-decoration: none !important;
-    cursor: pointer;
-    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
-    background: rgba(255, 255, 255, 0.025);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-sizing: border-box;
-}
-
-.fund-card:hover {
-    background: rgba(255, 255, 255, 0.055);
-    border-color: rgba(0, 218, 243, 0.5);
-    transform: translateY(-1px);
-}
-
-.fund-card.active {
-    background: linear-gradient(90deg, #00daf3 0%, #00f2ff 100%) !important;
-    border: none !important;
-}
-
-.fund-card-icon-wrap {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-}
-
-.fund-card-icon {
-    width: 17px;
-    height: 17px;
-    stroke: #8a919f;
-    stroke-width: 2;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.fund-card.active .fund-card-icon {
-    stroke: #003061;
-}
-
-.fund-card-details {
-    flex: 1;
-    min-width: 0;
-}
-
-.fund-card-name {
-    color: #e0e2ec;
-    font-size: 0.86rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.fund-card.active .fund-card-name {
-    color: #0a0e15;
-    font-weight: 700;
-}
-
-.fund-card-nav {
-    color: #8a919f;
-    font-size: 0.70rem;
-    margin-top: 1px;
-}
-
-.fund-card.active .fund-card-nav {
-    color: rgba(10, 14, 21, 0.75);
-}
-
-.fund-card-rating {
-    color: #e0e2ec;
-    font-size: 0.76rem;
-    font-weight: 600;
-    margin-left: 6px;
-    white-space: nowrap;
-}
-
-.fund-card.active .fund-card-rating {
-    color: #0a0e15;
-    font-weight: 700;
-}
-
-.transactions-section {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    padding-bottom: 8px;
-}
-
-.section-label {
-    color: #8a919f;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
-
-.tx-card {
-    background: rgba(255, 255, 255, 0.015);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
-    padding: 9px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-}
-
-.tx-lhs { display: flex; flex-direction: column; gap: 1px; }
-.tx-rhs { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-
-.tx-name { color: #e0e2ec; font-size: 0.80rem; font-weight: 600; }
-.tx-date { color: #8a919f; font-size: 0.66rem; }
-
-.tx-amt { font-size: 0.80rem; font-weight: 700; }
-.tx-amt.pos { color: #00daf3; }
-.tx-amt.neg { color: #feb019; }
-
-.tx-badge { font-size: 0.60rem; font-weight: 700; }
-.tx-badge.pos { color: #00daf3; }
-.tx-badge.neg { color: #feb019; }
-
-.see-all-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 3px;
-}
-
-.see-all-link {
-    color: #8a919f;
-    text-decoration: none;
-    font-size: 0.76rem;
-    font-weight: 600;
-}
-
-.sidebar-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 12px;
-    margin-top: 16px;
-    text-align: center;
-    color: rgba(138, 145, 159, 0.45);
-    font-size: 0.66rem;
-    line-height: 1.4;
-}
-</style>
-
-<div class="sidebar-container">
-    <!-- Brand Header -->
-    <div class="brand-header">
-        <div class="brand-icon-square">
-            <svg class="brand-svg-icon" viewBox="0 0 24 24">
-                <path d="M4 10h3v7H4zM10.5 5h3v12h-3zM17 12h3v5h-3z"/>
-                <path d="M2 20h20v2H2z"/>
-            </svg>
+with st.sidebar:
+    # Brand header
+    st.markdown("""
+    <div style="display:flex;align-items:center;gap:12px;padding:24px 16px 16px 16px;">
+        <div style="width:44px;height:44px;min-width:44px;background:#a8c8ff;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+            <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:#003061;"><path d="M4 10h3v7H4zM10.5 5h3v12h-3zM17 12h3v5h-3z"/><path d="M2 20h20v2H2z"/></svg>
         </div>
         <div>
-            <div class="brand-name">WealthSearchAI</div>
-            <div class="brand-subtitle">Scoped Groww RAG Assistant</div>
+            <div style="color:#e0e2ec;font-size:1.2rem;font-weight:700;line-height:1.1;font-family:'Outfit',sans-serif;">WealthSearchAI</div>
+            <div style="color:#8a919f;font-size:0.70rem;font-weight:400;margin-top:2px;">Scoped Groww RAG Assistant</div>
         </div>
     </div>
+    """, unsafe_allow_html=True)
 
-    <!-- Funds List -->
-    <div class="funds-list-container">
-"""
+    # Search input
+    sidebar_search = st.text_input(
+        "Search",
+        placeholder="🔍  Search by fund name, category...",
+        label_visibility="collapsed",
+        key="sidebar_search_input"
+    )
 
-# current active fund for link generation
-_active_key = selected_fund_key  # snapshot for f-string use below
+    # Fund cards as Streamlit buttons
+    _search_query = sidebar_search.lower().strip() if sidebar_search else ""
+    _search_words = _search_query.split() if _search_query else []
+    _match_count = 0
 
-for key, meta in FUND_VISUAL_METADATA.items():
-    is_active = (key == selected_fund_key)
-    active_class = "active" if is_active else ""
-    
-    # Read dynamic NAV and ratings from actual scraping database if available
-    db_fund = VERIFIED_SCHEME_DB.get(key)
-    nav_val = f"₹{db_fund['current_nav']:.2f}" if db_fund else meta["nav"]
-    rating_val = f"{db_fund['public_rating']['stars']}" if db_fund else meta["rating"]
-    
-    sidebar_html += f"""
-        <a href="?fund={key}" target="_self" class="fund-card {active_class}">
-            <div class="fund-card-icon-wrap">
-                <svg class="fund-card-icon" viewBox="0 0 24 24">
-                    {meta['icon_svg']}
-                </svg>
-            </div>
-            <div class="fund-card-details">
-                <div class="fund-card-name">{meta['visual_name']}</div>
-                <div class="fund-card-nav">NAV: {nav_val}</div>
-            </div>
-            <div class="fund-card-rating">{rating_val} ★</div>
-        </a>
-    """
+    st.markdown('<div style="padding: 0 4px; display: flex; flex-direction: column; gap: 6px;">', unsafe_allow_html=True)
+    for _key, _meta in FUND_VISUAL_METADATA.items():
+        _fund = VERIFIED_SCHEME_DB.get(_key)
+        _full_name = _fund["fund_name"] if _fund else _meta["visual_name"]
+        _nav = f"\u20b9{_fund['current_nav']:.2f}" if _fund else _meta["nav"]
+        _rat = f"{_fund['public_rating']['stars']}" if _fund else _meta["rating"]
+        _search_tags = f"{_full_name} {_meta['visual_name']} {_key}".lower()
 
-sidebar_html += """
-    </div>
+        # Filter: all search words must match somewhere in the tags
+        if _search_words and not all(w in _search_tags for w in _search_words):
+            continue
+        _match_count += 1
 
-    <!-- Recent Transactions Section -->
-    <div class="transactions-section">
-        <div class="section-label">RECENT TRANSACTIONS</div>
-        <div class="tx-card">
-            <div class="tx-lhs">
-                <div class="tx-name">Buy: Bluechip Fund</div>
-                <div class="tx-date">24 Oct 2023</div>
-            </div>
-            <div class="tx-rhs">
-                <div class="tx-amt pos">+&#8377;5,000.00</div>
-                <div class="tx-badge pos">&#9679; SUCCESS</div>
-            </div>
+        _is_active = (_key == selected_fund_key)
+        _btn_type = "primary" if _is_active else "secondary"
+        _label = f"{_full_name}  |  NAV: {_nav}  |  {_rat} ★"
+
+        if st.button(_label, key=f"fund_btn_{_key}", type=_btn_type, use_container_width=True,
+                     on_click=_select_fund, args=(_key,)):
+            pass
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Show "no results" message if search yielded nothing
+    if _search_query and _match_count == 0:
+        st.markdown('<div style="text-align:center;color:#8a919f;font-size:0.82rem;padding:16px 8px;">No funds match your search.</div>', unsafe_allow_html=True)
+
+    # Transactions section
+    st.markdown("""
+    <div style="padding: 16px 16px 0 16px;">
+        <div style="color:#8a919f;font-size:0.68rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;margin-bottom:10px;">Recent Transactions</div>
+        <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div><div style="color:#e0e2ec;font-size:0.80rem;font-weight:600;">Buy: Bluechip Fund</div><div style="color:#8a919f;font-size:0.66rem;">24 Oct 2023</div></div>
+            <div style="text-align:right;"><div style="font-size:0.80rem;font-weight:700;color:#00daf3;">+₹5,000.00</div><div style="font-size:0.60rem;font-weight:700;color:#00daf3;">● SUCCESS</div></div>
         </div>
-        <div class="tx-card">
-            <div class="tx-lhs">
-                <div class="tx-name">Sell: Arbitrage Fund</div>
-                <div class="tx-date">21 Oct 2023</div>
-            </div>
-            <div class="tx-rhs">
-                <div class="tx-amt neg">-&#8377;12,450.00</div>
-                <div class="tx-badge neg">&#9679; SETTLED</div>
-            </div>
+        <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div><div style="color:#e0e2ec;font-size:0.80rem;font-weight:600;">Sell: Arbitrage Fund</div><div style="color:#8a919f;font-size:0.66rem;">21 Oct 2023</div></div>
+            <div style="text-align:right;"><div style="font-size:0.80rem;font-weight:700;color:#feb019;">-₹12,450.00</div><div style="font-size:0.60rem;font-weight:700;color:#feb019;">● SETTLED</div></div>
         </div>
-        <div class="tx-card">
-            <div class="tx-lhs">
-                <div class="tx-name">SIP: Midcap Opp.</div>
-                <div class="tx-date">15 Oct 2023</div>
-            </div>
-            <div class="tx-rhs">
-                <div class="tx-amt pos">+&#8377;2,000.00</div>
-                <div class="tx-badge pos">&#9679; PROCESSED</div>
-            </div>
-        </div>
-        <div class="see-all-row">
-            <a href="#" class="see-all-link">See All &gt;</a>
-            <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#8a919f;stroke-width:2;fill:none;">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-            </svg>
+        <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div><div style="color:#e0e2ec;font-size:0.80rem;font-weight:600;">SIP: Midcap Opp.</div><div style="color:#8a919f;font-size:0.66rem;">15 Oct 2023</div></div>
+            <div style="text-align:right;"><div style="font-size:0.80rem;font-weight:700;color:#00daf3;">+₹2,000.00</div><div style="font-size:0.60rem;font-weight:700;color:#00daf3;">● PROCESSED</div></div>
         </div>
     </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.05);padding:12px 16px;text-align:center;color:rgba(138,145,159,0.45);font-size:0.66rem;line-height:1.4;">Premium Mutual Fund AI<br/>v2.4.0–STABLE</div>
+    """, unsafe_allow_html=True)
 
-    <!-- Sidebar Footer -->
-    <div class="sidebar-footer">
-        Premium Mutual Fund AI<br/>v2.4.0&#8211;STABLE
+
+# --- FUND SUMMARY RENDERER ---
+def render_fund_summary(fund_key: str):
+    """Render a comprehensive fund details summary page for the selected fund."""
+    fund = VERIFIED_SCHEME_DB.get(fund_key)
+    if not fund:
+        st.warning("Fund data not available.")
+        return
+
+    meta = FUND_VISUAL_METADATA.get(fund_key, {})
+    full_name = fund["fund_name"]
+    source_url = fund.get("source_url", "#")
+    nav = fund["current_nav"]
+    aum = fund["aum_in_crores"]
+    expense = fund["expense_ratio_pct"]
+    exit_load = fund.get("exit_load_text", "N/A")
+    rating = fund["public_rating"]["stars"]
+    reviews = fund["public_rating"]["total_reviews"]
+    managers = fund.get("fund_managers", [])
+    perf = fund.get("performance_timelines", {})
+    holdings = fund.get("top_holdings", [])
+
+    # Header + Stats + Exit Load
+    st.markdown(textwrap.dedent(f"""\
+    <div class="fund-summary-container">
+      <div class="fund-summary-header">
+        <div class="fund-summary-icon">
+          <svg viewBox="0 0 24 24" style="width:24px;height:24px;stroke:#00daf3;stroke-width:2;fill:none;">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="fund-summary-title">{full_name}</div>
+          <div class="fund-summary-subtitle">Source: <a href="{source_url}" target="_blank" style="color:#00daf3;text-decoration:none;">Groww Factsheet</a> &nbsp;|&nbsp; {meta.get('visual_name', '')}</div>
+        </div>
+      </div>
+      <div class="fund-stats-grid">
+        <div class="fund-stat-card">
+          <div class="fund-stat-label">Current NAV</div>
+          <div class="fund-stat-value highlight">\u20b9{nav:.2f}</div>
+        </div>
+        <div class="fund-stat-card">
+          <div class="fund-stat-label">AUM</div>
+          <div class="fund-stat-value">\u20b9{aum:,.0f} Cr</div>
+        </div>
+        <div class="fund-stat-card">
+          <div class="fund-stat-label">Expense Ratio</div>
+          <div class="fund-stat-value">{expense:.2f}%</div>
+        </div>
+        <div class="fund-stat-card">
+          <div class="fund-stat-label">Rating</div>
+          <div class="fund-stat-value highlight">{rating} \u2605 <span style="font-size:0.72rem;color:#8a919f;font-weight:400;">({reviews:,} reviews)</span></div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div class="fund-stat-label" style="margin-bottom:6px;">EXIT LOAD</div>
+        <div style="color:#e0e2ec;font-size:0.85rem;line-height:1.5;">{exit_load}</div>
+      </div>
     </div>
-</div>
-"""
+    """), unsafe_allow_html=True)
 
-# Render Sidebar HTML
-with st.sidebar:
-    st.markdown(sidebar_html, unsafe_allow_html=True)
+    # Performance returns
+    st.markdown(textwrap.dedent("""\
+    <div class="fund-section-title">Performance Returns</div>
+    """), unsafe_allow_html=True)
+    perf_cols = st.columns(4)
+    for idx, (period, label) in enumerate([("3_year_return_pct", "3Y"), ("5_year_return_pct", "5Y"), ("7_year_return_pct", "7Y"), ("10_year_return_pct", "10Y")]):
+        val = perf.get(period)
+        with perf_cols[idx]:
+            if val is not None:
+                st.markdown(textwrap.dedent(f"""\
+                <div class="perf-card">
+                  <div class="perf-period">{label}</div>
+                  <div class="perf-return">{val:.2f}%</div>
+                </div>
+                """), unsafe_allow_html=True)
+            else:
+                st.markdown(textwrap.dedent(f"""\
+                <div class="perf-card">
+                  <div class="perf-period">{label}</div>
+                  <div class="perf-return inactive">N/A</div>
+                </div>
+                """), unsafe_allow_html=True)
+
+    # Fund Manager
+    st.markdown(textwrap.dedent("""\
+    <div class="fund-section-title" style="margin-top:20px;">Fund Manager</div>
+    """), unsafe_allow_html=True)
+    for mgr in managers:
+        work_history_html = "<br>".join([f"\u2022 {w}" for w in mgr.get("work_history", [])])
+        st.markdown(textwrap.dedent(f"""\
+        <div class="fund-manager-card">
+          <div class="fund-manager-name">{mgr['name']}</div>
+          <div class="fund-manager-meta">
+            <strong>Tenure:</strong> Since {mgr.get('tenure_start', 'N/A')}<br>
+            <strong>Education:</strong> {mgr.get('education', 'N/A')}<br>
+            <strong style="color:#e0e2ec;">Work History:</strong><br>
+            {work_history_html}
+          </div>
+        </div>
+        """), unsafe_allow_html=True)
+
+    # Top Holdings
+    st.markdown(textwrap.dedent("""\
+    <div class="fund-section-title" style="margin-top:20px;">Top Holdings</div>
+    """), unsafe_allow_html=True)
+    rows = ""
+    for h in holdings:
+        rows += f'<tr><td>{h["company"]}</td><td>{h["sector"]}</td><td style="color:#00daf3;font-weight:600;">{h["allocation_pct"]:.2f}%</td></tr>'
+    st.markdown(textwrap.dedent(f"""\
+    <table class="fund-holdings-table">
+      <thead><tr><th>Company</th><th>Sector</th><th>Allocation</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table>
+    """), unsafe_allow_html=True)
 
 
 # --- MAIN CONTENT PANEL ---
@@ -972,156 +1115,122 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# View toggle tabs
+tab_summary, tab_chat = st.tabs(["Fund Summary", "Chat Terminal"])
 
-# --- CHAT & RAG PROCESSOR ENGINE ---
-# Instantiate response generator
-@st.cache_resource
-def get_generator():
-    return RAGResponseGenerator()
+with tab_summary:
+    st.session_state.view_mode = "summary"
+    render_fund_summary(selected_fund_key)
 
-generator = get_generator()
+with tab_chat:
+    st.session_state.view_mode = "chat"
 
-# Initialize chat history with design mockup parameters
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": "Welcome to **WealthSearchAI**. How can I help with your mutual fund queries today?\n\nI have real-time access to SEBI-grounded data and Groww product metrics.",
-            "citations": [],
-            "chart_data": ["nippon-india-small-cap-fund-direct-growth", "bandhan-small-cap-fund-direct-growth"],
-            "suggested_followups": [
-                f"Compare exit load of {FUND_VISUAL_METADATA['nippon-india-small-cap-fund-direct-growth']['visual_name']} and {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}",
-                f"Who manages {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}?",
-                f"Show expense ratio of {FUND_VISUAL_METADATA['edelweiss-mid-and-small-cap-fund-direct-growth']['visual_name']}"
-            ]
-        }
-    ]
+    # --- CHAT & RAG PROCESSOR ENGINE ---
+    # Instantiate response generator
+    @st.cache_resource
+    def get_generator():
+        return RAGResponseGenerator()
 
-# Display past messages
-for msg in st.session_state.messages:
-    avatar_url = ASSISTANT_AVATAR if msg["role"] == "assistant" else USER_AVATAR
+    generator = get_generator()
 
-    with st.chat_message(msg["role"], avatar=avatar_url):
-        st.markdown(msg["content"])
+    # Initialize chat history with design mockup parameters
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {
+                "role": "assistant",
+                "content": "Welcome to **WealthSearchAI**. How can I help with your mutual fund queries today?\n\nI have real-time access to SEBI-grounded data and Groww product metrics.",
+                "citations": [],
+                "chart_data": [],
+                "suggested_followups": [
+                    f"Compare exit load of {FUND_VISUAL_METADATA['nippon-india-small-cap-fund-direct-growth']['visual_name']} and {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}",
+                    f"Who manages {FUND_VISUAL_METADATA['parag-parikh-long-term-value-fund-direct-growth']['visual_name']}?",
+                    f"Show expense ratio of {FUND_VISUAL_METADATA['edelweiss-mid-and-small-cap-fund-direct-growth']['visual_name']}"
+                ]
+            }
+        ]
 
-        # Render NAV history area chart if chart_data is present
-        if msg.get("chart_data"):
-            mapped_keys = []
-            for display in msg["chart_data"]:
-                # Direct key match first (used in initial welcome message)
-                if display in VERIFIED_SCHEME_DB:
-                    mapped_keys.append(display)
-                    continue
-                # Fallback: fuzzy name/key match (used in RAG comparison responses)
-                for key, data in VERIFIED_SCHEME_DB.items():
-                    visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", "")
-                    if (display.lower() in data["fund_name"].lower() or
-                            display.lower() in visual_name.lower() or
-                            key in display.lower().replace(" ", "-")):
-                        mapped_keys.append(key)
-                        break
+    # Display past messages
+    for msg in st.session_state.messages:
+        avatar_url = ASSISTANT_AVATAR if msg["role"] == "assistant" else USER_AVATAR
 
-            # De-duplicate while preserving order
-            mapped_keys = list(dict.fromkeys(mapped_keys))
+        with st.chat_message(msg["role"], avatar=avatar_url):
+            st.markdown(msg["content"])
 
-            if mapped_keys:
-                render_nav_chart(mapped_keys)
-
-        # Render citations
-        if msg.get("citations"):
-            st.markdown("**Sources & Factsheets:**")
-            cols = st.columns(len(msg["citations"]))
-            for idx, cite in enumerate(msg["citations"]):
-                cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
-
-# Click-to-ask follow-up questions
-if st.session_state.messages and st.session_state.messages[-1]["role"] == "assistant":
-    last_msg = st.session_state.messages[-1]
-    if last_msg.get("suggested_followups"):
-        st.markdown("<div style='margin-top: 12px; margin-bottom: 4px; font-size: 0.85rem; font-weight: 700; color: #8a919f;'>SUGGESTED QUESTIONS:</div>", unsafe_allow_html=True)
-        cols = st.columns(len(last_msg["suggested_followups"]))
-        for idx, q_text in enumerate(last_msg["suggested_followups"]):
-            btn_label = q_text
-            if len(btn_label) > 42:
-                btn_label = btn_label[:40] + "..."
-            if cols[idx].button(btn_label, key=f"btn_{idx}_{len(st.session_state.messages)}", use_container_width=True):
-                st.session_state.current_question = q_text
-                st.rerun()
-
-# Capture query input
-if "current_question" not in st.session_state:
-    st.session_state.current_question = ""
-
-user_query = st.chat_input("Ask about fund performance, exit loads, or expense ratios...")
-
-# Override query if button was clicked
-if st.session_state.current_question:
-    user_query = st.session_state.current_question
-    st.session_state.current_question = ""  # Reset
-
-# Ingestion trigger
-if user_query:
-    # Display user input bubble
-    with st.chat_message("user", avatar=USER_AVATAR):
-        st.markdown(user_query)
-
-    st.session_state.messages.append({"role": "user", "content": user_query})
-
-    # Process RAG generation
-    with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-        with st.spinner("Retrieving compliance context and synthesizing answer..."):
-            res = generator.generate_response(user_query)
-
-            # Print response
-            st.markdown(res["answer"])
-
-            # Render NAV history chart if comparison funds returned
-            if res.get("comparison_funds"):
-                mapped_keys = []
-                for display in res["comparison_funds"]:
-                    if display in VERIFIED_SCHEME_DB:
-                        mapped_keys.append(display)
-                        continue
-                    for key, data in VERIFIED_SCHEME_DB.items():
-                        visual_name = FUND_VISUAL_METADATA.get(key, {}).get("visual_name", "")
-                        if (display.lower() in data["fund_name"].lower() or
-                                display.lower() in visual_name.lower() or
-                                key in display.lower().replace(" ", "-")):
-                            mapped_keys.append(key)
-                            break
-
-                mapped_keys = list(dict.fromkeys(mapped_keys))
-
-                if mapped_keys:
-                    render_nav_chart(mapped_keys)
-
-            # Print citations
-            if res.get("citations"):
+            # Render citations
+            if msg.get("citations"):
                 st.markdown("**Sources & Factsheets:**")
-                cols = st.columns(len(res["citations"]))
-                for idx, cite in enumerate(res["citations"]):
+                cols = st.columns(len(msg["citations"]))
+                for idx, cite in enumerate(msg["citations"]):
                     cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
 
-    # Map back standard visual display names in suggested follow-ups
-    formatted_followups = []
-    for f in res.get("suggested_followups", []):
-        modified_f = f
-        for key, visual in FUND_VISUAL_METADATA.items():
-            db_fund = VERIFIED_SCHEME_DB.get(key)
-            if db_fund:
-                modified_f = modified_f.replace(db_fund["fund_name"].replace(" Direct Growth", "").replace(" Direct Plan Growth", "").strip(), visual["visual_name"])
-                modified_f = modified_f.replace(db_fund["fund_name"], visual["visual_name"])
-        formatted_followups.append(modified_f)
+    # Click-to-ask follow-up questions
+    if st.session_state.messages and st.session_state.messages[-1]["role"] == "assistant":
+        last_msg = st.session_state.messages[-1]
+        if last_msg.get("suggested_followups"):
+            st.markdown("<div style='margin-top: 12px; margin-bottom: 4px; font-size: 0.85rem; font-weight: 700; color: #8a919f;'>SUGGESTED QUESTIONS:</div>", unsafe_allow_html=True)
+            cols = st.columns(len(last_msg["suggested_followups"]))
+            for idx, q_text in enumerate(last_msg["suggested_followups"]):
+                btn_label = q_text
+                if len(btn_label) > 42:
+                    btn_label = btn_label[:40] + "..."
+                if cols[idx].button(btn_label, key=f"btn_{idx}_{len(st.session_state.messages)}", use_container_width=True):
+                    st.session_state.current_question = q_text
+                    st.rerun()
 
-    # Store assistant response to session state
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": res["answer"],
-        "citations": res.get("citations", []),
-        "chart_data": res.get("comparison_funds", []),
-        "suggested_followups": formatted_followups
-    })
-    st.rerun()
+    # Capture query input
+    if "current_question" not in st.session_state:
+        st.session_state.current_question = ""
+
+    user_query = st.chat_input("Ask about fund performance, exit loads, or expense ratios...")
+
+    # Override query if button was clicked
+    if st.session_state.current_question:
+        user_query = st.session_state.current_question
+        st.session_state.current_question = ""  # Reset
+
+    # Ingestion trigger
+    if user_query:
+        # Display user input bubble
+        with st.chat_message("user", avatar=USER_AVATAR):
+            st.markdown(user_query)
+
+        st.session_state.messages.append({"role": "user", "content": user_query})
+
+        # Process RAG generation
+        with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
+            with st.spinner("Retrieving compliance context and synthesizing answer..."):
+                res = generator.generate_response(user_query)
+
+                # Print response
+                st.markdown(res["answer"])
+
+                # Print citations
+                if res.get("citations"):
+                    st.markdown("**Sources & Factsheets:**")
+                    cols = st.columns(len(res["citations"]))
+                    for idx, cite in enumerate(res["citations"]):
+                        cols[idx].markdown(f'<a href="{cite["url"]}" target="_blank" class="citation-badge">🔗 {cite["fund_name"]}</a>', unsafe_allow_html=True)
+
+        # Map back standard visual display names in suggested follow-ups
+        formatted_followups = []
+        for f in res.get("suggested_followups", []):
+            modified_f = f
+            for key, visual in FUND_VISUAL_METADATA.items():
+                db_fund = VERIFIED_SCHEME_DB.get(key)
+                if db_fund:
+                    modified_f = modified_f.replace(db_fund["fund_name"].replace(" Direct Growth", "").replace(" Direct Plan Growth", "").strip(), visual["visual_name"])
+                    modified_f = modified_f.replace(db_fund["fund_name"], visual["visual_name"])
+            formatted_followups.append(modified_f)
+
+        # Store assistant response to session state
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": res["answer"],
+            "citations": res.get("citations", []),
+            "chart_data": res.get("comparison_funds", []),
+            "suggested_followups": formatted_followups
+        })
+        st.rerun()
 
 # Footer SEBI Advisory Note
 st.markdown("""
