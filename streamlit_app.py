@@ -705,7 +705,6 @@ st.markdown("""
 
     /* Hide Streamlit default UI chrome */
     header[data-testid="stHeader"] { display: none !important; }
-    section[data-testid="stSidebar"] > div:first-child > button { display: none !important; }
     .stDeployButton, [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
     .block-container { padding-top: 1rem !important; }
     section[data-testid="stSidebar"] { background-color: #10131a !important; }
