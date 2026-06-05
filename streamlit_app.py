@@ -86,6 +86,12 @@ st.markdown("""
         gap: 0px !important;
     }
     
+    /* Ensure sidebar is always visible */
+    section[data-testid="stSidebar"][aria-expanded="false"] {
+        display: block !important;
+        width: auto !important;
+    }
+    
     /* Custom Sidebar Card Styling */
     .sidebar-container {
         padding: 24px 16px;
