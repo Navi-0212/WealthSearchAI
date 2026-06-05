@@ -5,7 +5,7 @@
     "doc_type": "Factsheet",
     "current_nav": 36.8,
     "aum_in_crores": 5120.5,
-    "expense_ratio_pct": 0.48,
+    "expense_ratio_pct": 0.77,
     "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.6,
@@ -56,7 +56,7 @@
         "allocation_pct": 1.66
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:32:54.053889Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:21.362428Z"
   },
   {
     "fund_name": "Bandhan Midcap Fund Direct Growth",
@@ -64,7 +64,7 @@
     "doc_type": "Factsheet",
     "current_nav": 24.15,
     "aum_in_crores": 1240.2,
-    "expense_ratio_pct": 1.0,
+    "expense_ratio_pct": 0.66,
     "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.5,
@@ -115,7 +115,7 @@
         "allocation_pct": 2.96
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:32:56.813153Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:24.154733Z"
   },
   {
     "fund_name": "Bandhan Multi Cap Fund Direct Growth",
@@ -123,7 +123,7 @@
     "doc_type": "Factsheet",
     "current_nav": 18.9,
     "aum_in_crores": 2150.4,
-    "expense_ratio_pct": 0.64,
+    "expense_ratio_pct": 1.04,
     "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.4,
@@ -174,7 +174,7 @@
         "allocation_pct": 2.97
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:32:59.635780Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:26.789170Z"
   },
   {
     "fund_name": "Edelweiss Mid Cap Direct Plan Growth",
@@ -182,7 +182,7 @@
     "doc_type": "Factsheet",
     "current_nav": 94.3,
     "aum_in_crores": 4560.8,
-    "expense_ratio_pct": 0.7,
+    "expense_ratio_pct": 0.69,
     "exit_load_text": "1% if redeemed within 90 days from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.5,
@@ -233,7 +233,7 @@
         "allocation_pct": 2.22
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:33:02.066824Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:29.594237Z"
   },
   {
     "fund_name": "Zerodha Multi Asset Passive FoF Direct Growth",
@@ -241,7 +241,7 @@
     "doc_type": "Factsheet",
     "current_nav": 12.4,
     "aum_in_crores": 350.2,
-    "expense_ratio_pct": 0.24,
+    "expense_ratio_pct": 0.21,
     "exit_load_text": "Nil Exit Load.",
     "public_rating": {
       "stars": 4.2,
@@ -292,7 +292,7 @@
         "allocation_pct": 0.38
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:33:04.812980Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:32.253183Z"
   },
   {
     "fund_name": "Parag Parikh Flexi Cap Fund Direct Growth",
@@ -300,7 +300,7 @@
     "doc_type": "Factsheet",
     "current_nav": 84.6,
     "aum_in_crores": 65240.5,
-    "expense_ratio_pct": 0.96,
+    "expense_ratio_pct": 0.97,
     "exit_load_text": "2% if redeemed within 365 days; 1% if redeemed between 366-730 days; Nil thereafter.",
     "public_rating": {
       "stars": 4.8,
@@ -351,7 +351,7 @@
         "allocation_pct": 4.92
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:33:07.547209Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:34.955571Z"
   },
   {
     "fund_name": "Nippon India Small Cap Fund Direct Growth",
@@ -359,7 +359,7 @@
     "doc_type": "Factsheet",
     "current_nav": 164.5,
     "aum_in_crores": 51230.4,
-    "expense_ratio_pct": 0.71,
+    "expense_ratio_pct": 0.63,
     "exit_load_text": "1% if redeemed within 1 month (30 days) from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.8,
@@ -410,7 +410,7 @@
         "allocation_pct": 1.54
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:33:10.379064Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:37.813779Z"
   },
   {
     "fund_name": "Nippon India Multi Asset Allocation Fund Direct Growth",
@@ -418,7 +418,7 @@
     "doc_type": "Factsheet",
     "current_nav": 15.6,
     "aum_in_crores": 3140.7,
-    "expense_ratio_pct": 0.32,
+    "expense_ratio_pct": 0.38,
     "exit_load_text": "1% if redeemed within 1 year (365 days) from the date of allotment; Nil thereafter.",
     "public_rating": {
       "stars": 4.6,
@@ -469,6 +469,6 @@
         "allocation_pct": 2.39
       }
     ],
-    "last_scraped_timestamp": "2026-06-04T07:33:13.131309Z"
+    "last_scraped_timestamp": "2026-06-05T05:31:40.558391Z"
   }
 ]
