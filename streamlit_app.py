@@ -32,6 +32,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Force sidebar to be always visible using JavaScript
+components.html("""
+<script>
+    // Force sidebar to be always visible
+    setInterval(function() {
+        const sidebar = document.querySelector('section[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.display = 'block';
+            sidebar.style.width = '320px';
+            sidebar.style.minWidth = '320px';
+            sidebar.setAttribute('aria-expanded', 'true');
+        }
+    }, 100);
+</script>
+""", height=0)
+
 # --- CUSTOM CSS & TYPOGRAPHY ---
 st.markdown("""
 <style>
