@@ -895,7 +895,10 @@ def _select_fund(fund_key):
     st.session_state.view_mode = "summary"
 
 
-with st.sidebar:
+# Use columns instead of sidebar for reliable fund list display
+col_funds, col_main = st.columns([1, 3])
+
+with col_funds:
     # Brand header
     st.markdown("""
     <div style="display:flex;align-items:center;gap:12px;padding:24px 16px 16px 16px;">
@@ -968,6 +971,76 @@ with st.sidebar:
     </div>
     <div style="border-top:1px solid rgba(255,255,255,0.05);padding:12px 16px;text-align:center;color:rgba(138,145,159,0.45);font-size:0.66rem;line-height:1.4;">Premium Mutual Fund AI<br/>v2.4.0–STABLE</div>
     """, unsafe_allow_html=True)
+
+with col_main:
+    # --- MAIN CONTENT PANEL ---
+    # Top Navigation bar
+    st.markdown("""
+    <div class="top-nav-bar">
+        <div class="top-nav-left">
+            <svg class="hamburger-icon" viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: none; stroke: #8a919f; stroke-width: 2;">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <span class="chat-terminal-title">Chat Terminal</span>
+        </div>
+        <div class="top-nav-right">
+            <span class="compliance-badge"><span class="badge-dot"></span>SEBI COMPLIANCE GROUNDED</span>
+            <div class="avatar-container">
+                <img class="avatar-image" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=WealthAI" alt="Avatar"/>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # View toggle tabs
+    tab_summary, tab_chat = st.tabs(["Fund Summary", "Chat Terminal"])
+
+    with tab_summary:
+        st.session_state.view_mode = "summary"
+        render_fund_summary(selected_fund_key)
+
+    with tab_chat:
+        st.session_state.view_mode = "chat"
+
+        # --- CHAT & RAG PROCESSOR ENGINE ---
+        # Instantiate response generator
+        @st.cache_resource
+        def get_generator():
+            return RAGResponseGenerator()
+
+        generator = get_generator()
+
+        # Chat interface
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        # Display chat messages
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+        # Chat input
+        if prompt := st.chat_input("Ask about mutual funds..."):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
+
+            # Generate response
+            with st.chat_message("assistant"):
+                response_placeholder = st.empty()
+                
+                # Check compliance
+                is_compliant, rejection_msg = generator.is_query_compliant(prompt)
+                if not is_compliant:
+                    response_placeholder.markdown(rejection_msg)
+                    st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                else:
+                    # Generate RAG response
+                    response = generator.generate_response(prompt)
+                    response_placeholder.markdown(response)
+                    st.session_state.messages.append({"role": "assistant", "content": response})
 
 
 # --- FUND SUMMARY RENDERER ---
