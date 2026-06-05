@@ -741,49 +741,49 @@ USER_AVATAR = (
 # --- MUTUAL FUND DATA VISUAL SCHEMES ---
 FUND_VISUAL_METADATA = {
     "nippon-india-small-cap-fund-direct-growth": {
-        "visual_name": "Bluechip Fund",
+        "visual_name": "Nippon India Small Cap Fund Direct Growth",
         "icon_svg": '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline>',
         "nav": "₹164.50",
         "rating": "4.8"
     },
     "parag-parikh-long-term-value-fund-direct-growth": {
-        "visual_name": "Flexi Cap Fund",
+        "visual_name": "Parag Parikh Long Term Value Fund Direct Growth",
         "icon_svg": '<rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>',
-        "nav": "₹82.12",
-        "rating": "4.6"
+        "nav": "₹84.60",
+        "rating": "4.8"
     },
     "edelweiss-mid-and-small-cap-fund-direct-growth": {
-        "visual_name": "Tax Saver ELSS",
+        "visual_name": "Edelweiss Mid and Small Cap Fund Direct Growth",
         "icon_svg": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>',
-        "nav": "₹45.30",
-        "rating": "4.7"
+        "nav": "₹94.30",
+        "rating": "4.5"
     },
     "bandhan-small-cap-fund-direct-growth": {
-        "visual_name": "Midcap Opportunities",
+        "visual_name": "Bandhan Small Cap Fund Direct Growth",
         "icon_svg": '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>',
-        "nav": "₹112.45",
-        "rating": "4.9"
+        "nav": "₹36.80",
+        "rating": "4.6"
     },
     "bandhan-midcap-fund-direct-growth": {
-        "visual_name": "Small Cap Index",
+        "visual_name": "Bandhan Midcap Fund Direct Growth",
         "icon_svg": '<rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect>',
-        "nav": "₹28.90",
+        "nav": "₹24.15",
         "rating": "4.5"
     },
     "bandhan-multi-cap-fund-direct-growth": {
-        "visual_name": "Liquid Debt Fund",
+        "visual_name": "Bandhan Multi Cap Fund Direct Growth",
         "icon_svg": '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>',
         "nav": "₹18.90",
         "rating": "4.4"
     },
     "zerodha-multi-asset-passive-fof-direct-growth": {
-        "visual_name": "Passive FoF Fund",
+        "visual_name": "Zerodha Multi Asset Passive FoF Direct Growth",
         "icon_svg": '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
         "nav": "₹12.40",
         "rating": "4.2"
     },
     "nippon-india-multi-asset-allocation-fund-direct-growth": {
-        "visual_name": "Multi Asset Alloc",
+        "visual_name": "Nippon India Multi Asset Allocation Fund Direct Growth",
         "icon_svg": '<path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path>',
         "nav": "₹15.60",
         "rating": "4.6"
