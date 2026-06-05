@@ -1267,6 +1267,8 @@ with col_main:
                     "hello": "Hello! I'm doing well, thank you for asking. How can I assist you with mutual fund information?",
                     "hey": "Hey! I'm doing well, thank you. What would you like to know about mutual funds?",
                     "how are you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                    "how r u": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                    "how r you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
                     "how are you doing": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
                     "how's it going": "It's going well, thank you! How are you? I'm here to assist with any mutual fund information you need.",
                     "good morning": "Good morning! I'm doing well, thank you. How can I help you with your mutual fund queries today?",
@@ -1279,14 +1281,18 @@ with col_main:
                 }
                 
                 prompt_lower = prompt.lower().strip()
-                # Check for exact matches or partial matches for greetings
+                # Check for exact matches or very specific greeting patterns
                 greeting_matched = False
                 greeting_response = ""
-                for greeting, response in greeting_responses.items():
-                    if greeting in prompt_lower or prompt_lower in greeting:
-                        greeting_matched = True
-                        greeting_response = response
-                        break
+                
+                # Only match if the input is very short or is a pure greeting
+                # Avoid matching questions that contain greeting words
+                if len(prompt_lower.split()) <= 3:  # Only very short inputs
+                    for greeting, response in greeting_responses.items():
+                        if greeting in prompt_lower or prompt_lower in greeting:
+                            greeting_matched = True
+                            greeting_response = response
+                            break
                 
                 if greeting_matched:
                     response_placeholder.markdown(greeting_response)
