@@ -747,13 +747,13 @@ FUND_VISUAL_METADATA = {
         "rating": "4.8"
     },
     "parag-parikh-long-term-value-fund-direct-growth": {
-        "visual_name": "Parag Parikh Long Term Value Fund Direct Growth",
+        "visual_name": "Parag Parikh Flexi Cap Fund Direct Growth",
         "icon_svg": '<rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>',
         "nav": "₹84.60",
         "rating": "4.8"
     },
     "edelweiss-mid-and-small-cap-fund-direct-growth": {
-        "visual_name": "Edelweiss Mid and Small Cap Fund Direct Growth",
+        "visual_name": "Edelweiss Midcap Fund Direct Growth",
         "icon_svg": '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>',
         "nav": "₹94.30",
         "rating": "4.5"
@@ -944,7 +944,7 @@ with st.sidebar:
 
         _is_active = (_key == selected_fund_key)
         _btn_type = "primary" if _is_active else "secondary"
-        _label = f"{_full_name}  |  NAV: {_nav}  |  {_rat} ★"
+        _label = f"{_full_name}"
 
         if st.button(_label, key=f"fund_btn_{_key}", type=_btn_type, use_container_width=True,
                      on_click=_select_fund, args=(_key,)):
