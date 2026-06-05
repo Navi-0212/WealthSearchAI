@@ -275,7 +275,7 @@ st.markdown("""
     }
     
     .tx-amount.settled {
-        color: #feb019;
+        color: #0088ff;
     }
     
     .tx-status {
@@ -288,7 +288,7 @@ st.markdown("""
     }
     
     .tx-status.settled {
-        color: #feb019;
+        color: #0088ff;
     }
     
     .see-all-container {
@@ -790,7 +790,7 @@ def render_nav_chart(mapped_keys: list):
     Render a smooth area/line chart of simulated 24-month NAV history for the given fund keys.
     Matches the design in image1.png: dark background, cyan + blue traces, minimal grid.
     """
-    CHART_COLORS = ["#00daf3", "#a8c8ff", "#feb019", "#00e5ff"]
+    CHART_COLORS = ["#00daf3", "#a8c8ff", "#0088ff", "#00e5ff"]
     months = pd.date_range(end=pd.Timestamp.now(), periods=24, freq="ME")
 
     fig = go.Figure()
@@ -962,7 +962,7 @@ with col_funds:
         </div>
         <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div><div style="color:#e0e2ec;font-size:0.80rem;font-weight:600;">Sell: Arbitrage Fund</div><div style="color:#8a919f;font-size:0.66rem;">21 Oct 2023</div></div>
-            <div style="text-align:right;"><div style="font-size:0.80rem;font-weight:700;color:#feb019;">-₹12,450.00</div><div style="font-size:0.60rem;font-weight:700;color:#feb019;">● SETTLED</div></div>
+            <div style="text-align:right;"><div style="font-size:0.80rem;font-weight:700;color:#0088ff;">-₹12,450.00</div><div style="font-size:0.60rem;font-weight:700;color:#0088ff;">● SETTLED</div></div>
         </div>
         <div style="background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div><div style="color:#e0e2ec;font-size:0.80rem;font-weight:600;">SIP: Midcap Opp.</div><div style="color:#8a919f;font-size:0.66rem;">15 Oct 2023</div></div>
