@@ -476,7 +476,8 @@ st.markdown("""
     }
     
     section[data-testid="stSidebar"] button[kind="primary"],
-    div[data-testid="stVerticalBlock"] button[kind="primary"] {
+    div[data-testid="stVerticalBlock"] button[kind="primary"],
+    button[kind="primary"] {
         background: #0088ff !important;
         border: none !important;
         border-radius: 12px !important;
@@ -495,14 +496,21 @@ st.markdown("""
     }
     
     section[data-testid="stSidebar"] button[kind="primary"]:hover,
-    div[data-testid="stVerticalBlock"] button[kind="primary"]:hover {
+    div[data-testid="stVerticalBlock"] button[kind="primary"]:hover,
+    button[kind="primary"]:hover {
         background: #0077e6 !important;
     }
     
     /* Force override any Streamlit default orange colors */
     section[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"],
-    div[data-testid="stVerticalBlock"] button[data-testid="stBaseButton-primary"] {
+    div[data-testid="stVerticalBlock"] button[data-testid="stBaseButton-primary"],
+    button[data-testid="stBaseButton-primary"] {
         background-color: #0088ff !important;
+    }
+    
+    /* Override any inline styles that might set orange */
+    button[style*="background"] {
+        background: #0088ff !important;
     }
     
     /* Fund Summary Page Styling */
@@ -1177,15 +1185,15 @@ with col_main:
                                 response = generator.generate_response(suggestion)
                                 
                                 # Parse and display follow-up questions
-                                main_response = response
+                                main_response = response["answer"] if isinstance(response, dict) else response
                                 follow_up_questions = []
                                 
                                 # Extract follow-up questions in <<Question>> format
                                 import re
                                 question_pattern = r'<<([^>]+)>>'
-                                questions = re.findall(question_pattern, response)
+                                questions = re.findall(question_pattern, main_response)
                                 if questions:
-                                    main_response = re.sub(question_pattern, '', response).strip()
+                                    main_response = re.sub(question_pattern, '', main_response).strip()
                                     follow_up_questions = questions[:3]  # Take first 3 questions
                                 
                                 response_placeholder.markdown(main_response)
@@ -1211,11 +1219,11 @@ with col_main:
                                                     followup_response = generator.generate_response(q)
                                                     
                                                     # Parse follow-up questions from follow-up response
-                                                    followup_main = followup_response
+                                                    followup_main = followup_response["answer"] if isinstance(followup_response, dict) else followup_response
                                                     followup_questions = []
-                                                    followup_qs = re.findall(question_pattern, followup_response)
+                                                    followup_qs = re.findall(question_pattern, followup_main)
                                                     if followup_qs:
-                                                        followup_main = re.sub(question_pattern, '', followup_response).strip()
+                                                        followup_main = re.sub(question_pattern, '', followup_main).strip()
                                                         followup_questions = followup_qs[:3]
                                                     
                                                     followup_placeholder.markdown(followup_main)
@@ -1237,7 +1245,8 @@ with col_main:
                                                                         st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
                                                                     else:
                                                                         fq_response = generator.generate_response(fq)
-                                                                        fq_main = re.sub(question_pattern, '', fq_response).strip()
+                                                                        fq_main = fq_response["answer"] if isinstance(fq_response, dict) else fq_response
+                                                                        fq_main = re.sub(question_pattern, '', fq_main).strip()
                                                                         fq_placeholder.markdown(fq_main)
                                                                         st.session_state.messages.append({"role": "assistant", "content": fq_main})
                                                 st.rerun()
@@ -1262,15 +1271,15 @@ with col_main:
                     response = generator.generate_response(prompt)
                     
                     # Parse and display follow-up questions
-                    main_response = response
+                    main_response = response["answer"] if isinstance(response, dict) else response
                     follow_up_questions = []
                     
                     # Extract follow-up questions in <<Question>> format
                     import re
                     question_pattern = r'<<([^>]+)>>'
-                    questions = re.findall(question_pattern, response)
+                    questions = re.findall(question_pattern, main_response)
                     if questions:
-                        main_response = re.sub(question_pattern, '', response).strip()
+                        main_response = re.sub(question_pattern, '', main_response).strip()
                         follow_up_questions = questions[:3]  # Take first 3 questions
                     
                     response_placeholder.markdown(main_response)
@@ -1296,11 +1305,11 @@ with col_main:
                                         followup_response = generator.generate_response(q)
                                         
                                         # Parse follow-up questions from follow-up response
-                                        followup_main = followup_response
+                                        followup_main = followup_response["answer"] if isinstance(followup_response, dict) else followup_response
                                         followup_questions = []
-                                        followup_qs = re.findall(question_pattern, followup_response)
+                                        followup_qs = re.findall(question_pattern, followup_main)
                                         if followup_qs:
-                                            followup_main = re.sub(question_pattern, '', followup_response).strip()
+                                            followup_main = re.sub(question_pattern, '', followup_main).strip()
                                             followup_questions = followup_qs[:3]
                                         
                                         followup_placeholder.markdown(followup_main)
@@ -1322,7 +1331,8 @@ with col_main:
                                                             st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
                                                         else:
                                                             fq_response = generator.generate_response(fq)
-                                                            fq_main = re.sub(question_pattern, '', fq_response).strip()
+                                                            fq_main = fq_response["answer"] if isinstance(fq_response, dict) else fq_response
+                                                            fq_main = re.sub(question_pattern, '', fq_main).strip()
                                                             fq_placeholder.markdown(fq_main)
                                                             st.session_state.messages.append({"role": "assistant", "content": fq_main})
                                     st.rerun()
