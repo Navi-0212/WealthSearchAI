@@ -1261,51 +1261,51 @@ with col_main:
             with st.chat_message("assistant"):
                 response_placeholder = st.empty()
                 
-                # Handle greetings and conversational inputs
-                greeting_responses = {
-                    "hi": "Hi there! I'm doing well, thank you for asking. How can I help you with your mutual fund queries today?",
-                    "hello": "Hello! I'm doing well, thank you for asking. How can I assist you with mutual fund information?",
-                    "hey": "Hey! I'm doing well, thank you. What would you like to know about mutual funds?",
-                    "how are you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
-                    "how r u": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
-                    "how r you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
-                    "how are you doing": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
-                    "how's it going": "It's going well, thank you! How are you? I'm here to assist with any mutual fund information you need.",
-                    "how can you help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
-                    "how can u help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
-                    "what can you do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
-                    "what can u do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
-                    "good morning": "Good morning! I'm doing well, thank you. How can I help you with your mutual fund queries today?",
-                    "good afternoon": "Good afternoon! I'm doing well, thank you. How can I assist you with mutual fund information?",
-                    "good evening": "Good evening! I'm doing well, thank you. What would you like to know about mutual funds?",
-                    "thanks": "You're welcome! Is there anything else I can help you with regarding mutual funds?",
-                    "thank you": "You're welcome! Is there anything else I can help you with regarding mutual funds?",
-                    "bye": "Goodbye! Feel free to come back anytime if you have more mutual fund questions.",
-                    "goodbye": "Goodbye! Feel free to come back anytime if you have more mutual fund questions.",
-                }
-                
-                prompt_lower = prompt.lower().strip()
-                # Check for exact matches or very specific greeting patterns
-                greeting_matched = False
-                greeting_response = ""
-                
-                # Check for conversational/greeting patterns
-                for greeting, response in greeting_responses.items():
-                    if greeting in prompt_lower or prompt_lower in greeting:
-                        greeting_matched = True
-                        greeting_response = response
-                        break
-                
-                if greeting_matched:
-                    response_placeholder.markdown(greeting_response)
-                    st.session_state.messages.append({"role": "assistant", "content": greeting_response})
-                    st.rerun()
+                # Check compliance first (before greeting detection to catch investment advice)
+                is_compliant, rejection_msg = generator.is_query_compliant(prompt)
+                if not is_compliant:
+                    response_placeholder.markdown(rejection_msg)
+                    st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
                 else:
-                    # Check compliance
-                    is_compliant, rejection_msg = generator.is_query_compliant(prompt)
-                    if not is_compliant:
-                        response_placeholder.markdown(rejection_msg)
-                        st.session_state.messages.append({"role": "assistant", "content": rejection_msg})
+                    # Handle greetings and conversational inputs
+                    greeting_responses = {
+                        "hi": "Hi there! I'm doing well, thank you for asking. How can I help you with your mutual fund queries today?",
+                        "hello": "Hello! I'm doing well, thank you for asking. How can I assist you with mutual fund information?",
+                        "hey": "Hey! I'm doing well, thank you. What would you like to know about mutual funds?",
+                        "how are you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                        "how r u": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                        "how r you": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                        "how are you doing": "I'm doing well, thank you for asking! How are you today? I'm here to help with any mutual fund questions you might have.",
+                        "how's it going": "It's going well, thank you! How are you? I'm here to assist with any mutual fund information you need.",
+                        "how can you help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
+                        "how can u help": "I can help you with information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data for the 8 funds in our database. Feel free to ask specific questions about any of these funds!",
+                        "what can you do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
+                        "what can u do": "I can provide detailed information about mutual funds, including NAV, expense ratios, fund managers, holdings, exit loads, and performance data. I have access to 8 specific funds in my database. What would you like to know?",
+                        "good morning": "Good morning! I'm doing well, thank you. How can I help you with your mutual fund queries today?",
+                        "good afternoon": "Good afternoon! I'm doing well, thank you. How can I assist you with mutual fund information?",
+                        "good evening": "Good evening! I'm doing well, thank you. What would you like to know about mutual funds?",
+                        "thanks": "You're welcome! Is there anything else I can help you with regarding mutual funds?",
+                        "thank you": "You're welcome! Is there anything else I can help you with regarding mutual funds?",
+                        "bye": "Goodbye! Feel free to come back anytime if you have more mutual fund questions.",
+                        "goodbye": "Goodbye! Feel free to come back anytime if you have more mutual fund questions.",
+                    }
+                    
+                    prompt_lower = prompt.lower().strip()
+                    # Check for exact matches or very specific greeting patterns
+                    greeting_matched = False
+                    greeting_response = ""
+                    
+                    # Check for conversational/greeting patterns
+                    for greeting, response in greeting_responses.items():
+                        if greeting in prompt_lower or prompt_lower in greeting:
+                            greeting_matched = True
+                            greeting_response = response
+                            break
+                    
+                    if greeting_matched:
+                        response_placeholder.markdown(greeting_response)
+                        st.session_state.messages.append({"role": "assistant", "content": greeting_response})
+                        st.rerun()
                     else:
                         # Generate RAG response
                         response = generator.generate_response(prompt)
